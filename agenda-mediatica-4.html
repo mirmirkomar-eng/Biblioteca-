@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Mediática Argentina</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f4f0e8;
+    --newsprint: #e8e2d4;
+    --accent: #c41e1e;
+    --accent2: #1a3a6b;
+    --muted: #6b6456;
+    --rule: #c8bfaf;
+    --highlight: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f4f0e8'/%3E%3Ccircle cx='1' cy='1' r='0.4' fill='%23d4cfc4' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* HEADER */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    border-bottom: 4px solid var(--accent);
+  }
+  .masthead-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 32px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 20px;
+  }
+  .masthead-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: #8a8070;
+    line-height: 1.8;
+  }
+  .masthead-meta span { color: var(--paper); }
+  .masthead-title {
+    text-align: center;
+  }
+  .masthead-title h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .masthead-title h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .masthead-title .sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: #8a8070;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  .masthead-actions {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+  }
+  .btn-primary {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn-primary:hover { background: var(--accent); color: white; }
+  .btn-secondary {
+    border-color: #3a3530;
+    color: #8a8070;
+  }
+  .btn-secondary:hover { border-color: var(--paper); color: var(--paper); }
+
+  /* TICKER */
+  .ticker {
+    background: var(--accent);
+    color: white;
+    padding: 6px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticker::before {
+    content: 'ÚLTIMAS';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--ink);
+    padding: 6px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+  }
+  .ticker-track {
+    display: flex;
+    gap: 0;
+    padding-left: 90px;
+    white-space: nowrap;
+    animation: ticker 40s linear infinite;
+  }
+  .ticker-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 0 24px;
+    border-right: 1px solid rgba(255,255,255,0.3);
+  }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* MAIN LAYOUT */
+  .layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .section-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid var(--accent);
+  }
+  .section-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* FUENTES GRID */
+  .fuentes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    border: 2px solid var(--ink);
+  }
+  .fuente-card {
+    background: var(--paper);
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .fuente-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .fuente-header:hover { background: #222; }
+  .fuente-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .fuente-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #444;
+  }
+  .fuente-dot.ok { background: #4caf50; }
+  .fuente-dot.loading { background: var(--highlight); animation: pulse 1s infinite; }
+  .fuente-dot.error { background: var(--accent); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .fuente-body {
+    padding: 12px;
+    min-height: 160px;
+  }
+  .fuente-item {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--rule);
+    cursor: pointer;
+  }
+  .fuente-item:last-child { border-bottom: none; }
+  .fuente-item-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--ink);
+    transition: color 0.15s;
+  }
+  .fuente-item:hover .fuente-item-title { color: var(--accent2); }
+  .fuente-item-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .fuente-empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    padding: 20px;
+  }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 28px; }
+
+  /* ANALISIS */
+  .analisis-box {
+    border: 2px solid var(--ink);
+    overflow: hidden;
+  }
+  .analisis-header {
+    background: var(--accent2);
+    color: white;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .analisis-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .analisis-body {
+    padding: 16px;
+    min-height: 200px;
+    background: var(--paper);
+  }
+  .analisis-placeholder {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.8;
+    text-align: center;
+    padding: 30px 0;
+  }
+  .analisis-content {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .analisis-content h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 12px 0 6px;
+    color: var(--accent2);
+    border-left: 3px solid var(--accent);
+    padding-left: 8px;
+  }
+  .analisis-content h4:first-child { margin-top: 0; }
+  .analisis-content p { margin-bottom: 8px; }
+  .analisis-content ul { padding-left: 16px; margin-bottom: 8px; }
+  .analisis-content li { margin-bottom: 4px; }
+  .analisis-content strong { color: var(--accent); }
+
+  /* WORDCLOUD / TEMAS */
+  .temas-box {
+    border: 2px solid var(--ink);
+    overflow: hidden;
+  }
+  .temas-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+  }
+  .temas-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .temas-body { padding: 16px; }
+  .temas-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 80px;
+  }
+  .tema-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border: 1px solid;
+    cursor: default;
+    transition: all 0.15s;
+  }
+  .tema-tag:hover { transform: scale(1.05); }
+  .tema-tag.xl { font-size: 14px; font-weight: 500; border-width: 2px; }
+  .tema-tag.lg { font-size: 12px; }
+  .tema-tag.md { font-size: 11px; }
+  .tema-tag.sm { font-size: 10px; }
+
+  .tema-cat-0 { border-color: var(--accent); color: var(--accent); }
+  .tema-cat-1 { border-color: var(--accent2); color: var(--accent2); }
+  .tema-cat-2 { border-color: #5a6e2a; color: #5a6e2a; }
+  .tema-cat-3 { border-color: #7a4a1a; color: #7a4a1a; }
+  .tema-cat-4 { border-color: #4a1a7a; color: #4a1a7a; }
+
+  /* MEDIDOR COBERTURA */
+  .cobertura-box {
+    border: 2px solid var(--ink);
+    overflow: hidden;
+  }
+  .cobertura-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+  }
+  .cobertura-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .cobertura-body { padding: 16px; }
+  .cobertura-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 28px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .cobertura-nombre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cobertura-bar-wrap {
+    height: 6px;
+    background: var(--newsprint);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .cobertura-bar {
+    height: 100%;
+    background: var(--accent2);
+    transition: width 1s ease;
+  }
+  .cobertura-n {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* FOOTER RULE */
+  .footer-rule {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px 24px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+  }
+  .footer-rule span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* LOADING STATE */
+  .skeleton {
+    background: linear-gradient(90deg, var(--newsprint) 25%, var(--rule) 50%, var(--newsprint) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+    border-radius: 2px;
+    height: 10px;
+    margin-bottom: 6px;
+  }
+  @keyframes shimmer { from{background-position:200%} to{background-position:-200%} }
+
+  /* STATUS BAR */
+  .status-bar {
+    background: var(--newsprint);
+    border-bottom: 1px solid var(--rule);
+    padding: 5px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 100%;
+  }
+  .status-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .status-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--newsprint); }
+  ::-webkit-scrollbar-thumb { background: var(--rule); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; padding: 16px; }
+    .fuentes-grid { grid-template-columns: repeat(2, 1fr); }
+    .masthead-inner { grid-template-columns: 1fr; text-align: center; }
+    .masthead-meta, .masthead-actions { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-meta">
+      <div>Fuentes activas: <span id="fuentesActivas">—</span> / 9</div>
+      <div>Titulares cargados: <span id="totalTitulares">—</span></div>
+      <div>Última actualización: <span id="lastUpdate">—</span></div>
+    </div>
+    <div class="masthead-title">
+      <h1><em>Agenda</em> Mediática</h1>
+      <div class="sub">Monitor de prensa argentina · Tiempo real</div>
+    </div>
+    <div class="masthead-actions">
+      <button class="btn btn-primary" onclick="cargarTodo()">↻ Actualizar</button>
+      <button class="btn btn-secondary" onclick="analizarConClaude()" id="btnAnalizar">✦ Analizar con IA</button>
+    </div>
+  </div>
+</div>
+
+<div class="ticker">
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-item">Cargando titulares...</div>
+    <div class="ticker-item">Cargando titulares...</div>
+  </div>
+</div>
+
+<div class="status-bar">
+  <div class="status-item"><div class="status-dot" style="background:#4caf50"></div> RSS en vivo</div>
+  <div class="status-item"><div class="status-dot" style="background:var(--accent2)"></div> Análisis IA disponible</div>
+  <div class="status-item" id="statusGeneral">Iniciando...</div>
+</div>
+
+<div class="layout">
+  <!-- MAIN COLUMN -->
+  <div>
+    <div class="section-header">
+      <h2>Titulares del día</h2>
+      <span class="section-badge">En vivo</span>
+      <span class="section-count" id="contadorTitulares">0 titulares</span>
+    </div>
+    <div class="fuentes-grid" id="fuentesGrid">
+      <!-- Generado por JS -->
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- ANÁLISIS IA -->
+    <div class="analisis-box">
+      <div class="analisis-header">
+        <h3>Análisis editorial</h3>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;opacity:0.7">IA</span>
+      </div>
+      <div class="analisis-body" id="analisisBody">
+        <div class="analisis-placeholder">
+          Cargá los titulares y presioná<br>"Analizar con IA" para obtener<br>un análisis de la agenda mediática.
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMAS EN COMÚN -->
+    <div class="temas-box">
+      <div class="temas-header">
+        <h3>Palabras clave</h3>
+      </div>
+      <div class="temas-body">
+        <div class="temas-cloud" id="temasCloud">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)">Pendiente de carga...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COBERTURA POR MEDIO -->
+    <div class="cobertura-box">
+      <div class="cobertura-header">
+        <h3>Titulares por medio</h3>
+      </div>
+      <div class="cobertura-body" id="coberturaBody">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)">Pendiente de carga...</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer-rule">
+  <span>© AGENDA MEDIÁTICA · ARGENTINA</span>
+  <span id="footerFecha">—</span>
+  <span>VÍA RSS · ANÁLISIS IA ANTHROPIC</span>
+</div>
+
+<script>
+const FUENTES = [
+  { nombre: 'Clarín',     rss: 'https://www.clarin.com/rss/lo-ultimo/',                              color: '#003087', url: 'https://www.clarin.com' },
+  { nombre: 'Perfil',     rss: 'https://www.perfil.com/feed',                                        color: '#e31837', url: 'https://www.perfil.com' },
+  { nombre: 'La Nación',  rss: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/',                 color: '#0066cc', url: 'https://www.lanacion.com.ar' },
+  { nombre: 'Página 12',  rss: 'https://www.pagina12.com.ar/arc/outboundfeeds/rss/secciones/el-pais/notas', color: '#8b0000', url: 'https://www.pagina12.com.ar' },
+  { nombre: 'Ámbito',     rss: 'https://www.ambito.com/rss/pages/home.xml',                          color: '#1a1a2e', url: 'https://www.ambito.com' },
+  { nombre: 'El Cronista',rss: 'https://www.cronista.com/files/rss/news.xml',                        color: '#1a3a6b', url: 'https://www.cronista.com' },
+  { nombre: 'Olé',        rss: 'https://www.ole.com.ar/rss/',                                        color: '#f5a623', url: 'https://www.ole.com.ar' },
+  { nombre: 'NYT',        rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',          color: '#000000', url: 'https://www.nytimes.com' },
+  { nombre: 'Economist',  rss: 'https://www.economist.com/international/rss.xml',                    color: '#e3120b', url: 'https://www.economist.com' },
+  { nombre: 'DW',         rss: 'https://rss.dw.com/rdf/rss-en-world',                               color: '#006aff', url: 'https://www.dw.com' }
+];
+
+// Proxies CORS en orden de preferencia
+function getProxies(rssUrl) {
+  const enc = encodeURIComponent(rssUrl);
+  return [
+    // rss2json primero: más compatible con medios argentinos
+    { url: `https://api.rss2json.com/v1/api.json?rss_url=${enc}`, tipo: 'rss2json' },
+    // AllOrigins: devuelve { contents: "<xml>..." }
+    { url: `https://api.allorigins.win/get?url=${enc}`, tipo: 'allorigins' },
+    // corsproxy.io
+    { url: `https://corsproxy.io/?${enc}`, tipo: 'xml' },
+    // thingproxy como último recurso
+    { url: `https://thingproxy.freeboard.io/fetch/${rssUrl}`, tipo: 'xml' },
+  ];
+}
+
+// Parsear XML RSS a array de items
+function parseXML(xmlStr) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlStr, 'text/xml');
+  const items = Array.from(doc.querySelectorAll('item'));
+  return items.map(el => ({
+    title: el.querySelector('title')?.textContent || '',
+    link:  el.querySelector('link')?.textContent || el.querySelector('link')?.getAttribute('href') || '',
+    pubDate: el.querySelector('pubDate')?.textContent || ''
+  })).filter(i => i.title);
+}
+
+let todosLosTitulares = {};
+let estadoFuentes = {};
+
+// ──────────────────────────────
+// INIT
+// ──────────────────────────────
+function init() {
+  actualizarFecha();
+  renderFuentesGrid();
+  cargarTodo();
+}
+
+function actualizarFecha() {
+  const ahora = new Date();
+  const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+  const fecha = ahora.toLocaleDateString('es-AR', opts);
+  document.getElementById('footerFecha').textContent = fecha.toUpperCase();
+}
+
+// ──────────────────────────────
+// RENDER GRID INICIAL
+// ──────────────────────────────
+function renderFuentesGrid() {
+  const grid = document.getElementById('fuentesGrid');
+  grid.innerHTML = FUENTES.map(f => `
+    <div class="fuente-card" id="card-${slugify(f.nombre)}">
+      <div class="fuente-header" onclick="abrirFuente('${f.url}')">
+        <span class="fuente-nombre">${f.nombre}</span>
+        <div class="fuente-dot loading" id="dot-${slugify(f.nombre)}"></div>
+      </div>
+      <div class="fuente-body" id="body-${slugify(f.nombre)}">
+        ${skeletonHTML()}
+      </div>
+    </div>
+  `).join('');
+}
+
+function skeletonHTML() {
+  return [80,60,70,55,65].map(w => `<div class="skeleton" style="width:${w}%"></div>`).join('');
+}
+
+function slugify(s) { return s.toLowerCase().replace(/\s/g,'-').replace(/[áà]/g,'a').replace(/[éè]/g,'e').replace(/[íì]/g,'i').replace(/[óò]/g,'o').replace(/[úù]/g,'u'); }
+
+// ──────────────────────────────
+// CARGA RSS
+// ──────────────────────────────
+async function cargarTodo() {
+  todosLosTitulares = {};
+  estadoFuentes = {};
+  document.getElementById('statusGeneral').textContent = 'Cargando feeds RSS...';
+  document.getElementById('btnAnalizar').disabled = true;
+
+  renderFuentesGrid();
+
+  const promesas = FUENTES.map(f => cargarFuente(f));
+  await Promise.allSettled(promesas);
+
+  actualizarMasthead();
+  actualizarTicker();
+  actualizarWordcloud();
+  actualizarCobertura();
+  document.getElementById('btnAnalizar').disabled = false;
+  document.getElementById('statusGeneral').textContent = `Listo · ${new Date().toLocaleTimeString('es-AR')}`;
+  document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('es-AR');
+}
+
+async function cargarFuente(fuente) {
+  const slug = slugify(fuente.nombre);
+  const dot = document.getElementById(`dot-${slug}`);
+  const body = document.getElementById(`body-${slug}`);
+  const proxies = getProxies(fuente.rss);
+  let items = [];
+  let lastError = '';
+
+  const fetchConTimeout = (url, ms) => Promise.race([
+    fetch(url),
+    new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout')), ms))
+  ]);
+
+  for (const proxy of proxies) {
+    try {
+      const res = await fetchConTimeout(proxy.url, 8000);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      if (proxy.tipo === 'rss2json') {
+        const data = await res.json();
+        if (data.status === 'error') throw new Error(data.message || 'rss2json error');
+        items = (data.items || []).slice(0, 5);
+      } else if (proxy.tipo === 'allorigins') {
+        const data = await res.json();
+        const xml = data.contents;
+        if (!xml) throw new Error('Contenido vacío');
+        items = parseXML(xml).slice(0, 5);
+      } else {
+        // xml directo
+        const xml = await res.text();
+        items = parseXML(xml).slice(0, 5);
+      }
+
+      if (!items.length) throw new Error('Sin items');
+      break; // éxito, salir del loop
+
+    } catch(e) {
+      lastError = e.message;
+      continue; // intentar próximo proxy
+    }
+  }
+
+  if (items.length) {
+    todosLosTitulares[fuente.nombre] = items;
+    estadoFuentes[slug] = 'ok';
+    dot.className = 'fuente-dot ok';
+    body.innerHTML = items.map(item => {
+      const fecha = item.pubDate ? formatTime(new Date(item.pubDate)) : '';
+      const link = (item.link || '').replace(/'/g, "\\'");
+      return `
+        <div class="fuente-item" onclick="window.open('${link}','_blank')">
+          <div class="fuente-item-title">${limpiarTitulo(item.title)}</div>
+          ${fecha ? `<div class="fuente-item-meta">${fecha}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  } else {
+    estadoFuentes[slug] = 'error';
+    dot.className = 'fuente-dot error';
+    body.innerHTML = `<div class="fuente-empty">No se pudo cargar.<br><span style="font-size:9px;color:var(--accent)">${lastError}</span></div>`;
+  }
+}
+
+function limpiarTitulo(t) {
+  return (t || '').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").trim();
+}
+
+function formatTime(d) {
+  const ahora = new Date();
+  const diff = Math.round((ahora - d) / 60000);
+  if (diff < 1) return 'Ahora';
+  if (diff < 60) return `Hace ${diff} min`;
+  if (diff < 1440) return `Hace ${Math.round(diff/60)}h`;
+  return d.toLocaleDateString('es-AR');
+}
+
+function abrirFuente(url) { window.open(url, '_blank'); }
+
+// ──────────────────────────────
+// MASTHEAD COUNTERS
+// ──────────────────────────────
+function actualizarMasthead() {
+  const activos = Object.values(estadoFuentes).filter(v => v === 'ok').length;
+  const total = Object.values(todosLosTitulares).reduce((a, b) => a + b.length, 0);
+  document.getElementById('fuentesActivas').textContent = activos;
+  document.getElementById('totalTitulares').textContent = total;
+  document.getElementById('contadorTitulares').textContent = `${total} titulares`;
+}
+
+// ──────────────────────────────
+// TICKER
+// ──────────────────────────────
+function actualizarTicker() {
+  const todos = [];
+  for (const [medio, items] of Object.entries(todosLosTitulares)) {
+    items.slice(0,3).forEach(i => todos.push(`[${medio.toUpperCase()}] ${limpiarTitulo(i.title)}`));
+  }
+  if (!todos.length) return;
+  const html = [...todos, ...todos].map(t => `<div class="ticker-item">${t}</div>`).join('');
+  document.getElementById('tickerTrack').innerHTML = html;
+}
+
+// ──────────────────────────────
+// WORDCLOUD
+// ──────────────────────────────
+function actualizarWordcloud() {
+  const stopwords = new Set(['de','la','el','los','las','en','y','a','con','que','del','por','un','una','se','al','es','su','sus','para','más','sobre','no','le','los','las','como','pero','fue','ha','han','son','lo','les','si','ya','o','también','tras','ante','entre','hay','nuevo','nueva','este','esta','ser','sin','puede','tiene','cuando','donde','parte','bajo','cada','así','todo','toda']);
+
+  const freq = {};
+  for (const items of Object.values(todosLosTitulares)) {
+    for (const item of items) {
+      const palabras = limpiarTitulo(item.title).toLowerCase().split(/\W+/);
+      for (const p of palabras) {
+        if (p.length > 3 && !stopwords.has(p)) {
+          freq[p] = (freq[p] || 0) + 1;
+        }
+      }
+    }
+  }
+
+  const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,30);
+  const max = sorted[0]?.[1] || 1;
+  const cats = ['tema-cat-0','tema-cat-1','tema-cat-2','tema-cat-3','tema-cat-4'];
+
+  const html = sorted.map(([palabra, count], i) => {
+    const ratio = count / max;
+    const size = ratio > 0.7 ? 'xl' : ratio > 0.5 ? 'lg' : ratio > 0.3 ? 'md' : 'sm';
+    const cat = cats[i % cats.length];
+    return `<span class="tema-tag ${size} ${cat}" title="${count} menciones">${palabra}</span>`;
+  }).join('');
+
+  document.getElementById('temasCloud').innerHTML = html || '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--muted)">Sin datos</span>';
+}
+
+// ──────────────────────────────
+// COBERTURA
+// ──────────────────────────────
+function actualizarCobertura() {
+  const max = Math.max(...Object.values(todosLosTitulares).map(a=>a.length), 1);
+  const html = FUENTES.map(f => {
+    const items = todosLosTitulares[f.nombre] || [];
+    const pct = Math.round((items.length / max) * 100);
+    const slug = slugify(f.nombre);
+    const estado = estadoFuentes[slug];
+    return `
+      <div class="cobertura-item">
+        <span class="cobertura-nombre">${f.nombre}</span>
+        <div class="cobertura-bar-wrap">
+          <div class="cobertura-bar" style="width:${estado==='ok'?pct:0}%;background:${estado==='error'?'var(--accent)':'var(--accent2)'}"></div>
+        </div>
+        <span class="cobertura-n">${estado==='error'?'—':items.length}</span>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('coberturaBody').innerHTML = html;
+}
+
+// ──────────────────────────────
+// ANÁLISIS CON CLAUDE
+// ──────────────────────────────
+async function analizarConClaude() {
+  const btn = document.getElementById('btnAnalizar');
+  const body = document.getElementById('analisisBody');
+
+  if (!Object.keys(todosLosTitulares).length) {
+    body.innerHTML = '<div class="analisis-placeholder">Primero cargá los titulares.</div>';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Analizando...';
+
+  body.innerHTML = `
+    <div style="padding:10px 0">
+      ${[90,70,80,60,75,65,80,55].map(w=>`<div class="skeleton" style="width:${w}%;margin-bottom:8px"></div>`).join('')}
+    </div>
+  `;
+
+  // Armar resumen de titulares para enviar a Claude
+  let prompt = `Sos un analista de medios argentinos. A continuación te presento los principales titulares del día de 9 medios argentinos. Analizá:
+
+1. **Temas centrales de la agenda**: qué temas dominan la cobertura hoy
+2. **Coincidencias entre medios**: sobre qué informan todos o casi todos
+3. **Divergencias editoriales**: dónde difieren los enfoques (especialmente entre medios con líneas distintas como Infobae/La Nación vs Página 12/El Destape)
+4. **Dato llamativo**: algo que te llame la atención del panorama mediático de hoy
+
+Sé concreto, directo y periodístico. Máximo 250 palabras. Usá markdown con ## para subtítulos.\n\n`;
+
+  for (const [medio, items] of Object.entries(todosLosTitulares)) {
+    prompt += `**${medio}**:\n`;
+    items.slice(0,5).forEach(i => {
+      prompt += `- ${limpiarTitulo(i.title)}\n`;
+    });
+    prompt += '\n';
+  }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const texto = data.content?.[0]?.text || 'No se pudo obtener análisis.';
+    body.innerHTML = `<div class="analisis-content">${renderMarkdown(texto)}</div>`;
+
+  } catch(e) {
+    body.innerHTML = `<div class="analisis-placeholder">Error al conectar con la IA.<br><span style="font-size:9px;color:var(--accent)">${e.message}</span></div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✦ Analizar con IA';
+}
+
+// Mini markdown renderer
+function renderMarkdown(text) {
+  return text
+    .replace(/## (.+)/g, '<h4>$1</h4>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^(?!<[h|u|l])/gm, '')
+    .replace(/(.+?)(?=<h4>|<ul>|$)/gs, (m) => m.trim() ? `<p>${m.trim()}</p>` : '')
+    .replace(/<p><\/p>/g, '')
+    .replace(/<p>(<[hul])/g, '$1')
+    .replace(/(<\/[hul][^>]*>)<\/p>/g, '$1');
+}
+
+// ──────────────────────────────
+// ARRANCAR
+// ──────────────────────────────
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
