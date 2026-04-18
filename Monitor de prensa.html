@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Mediática Argentina</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f4f0e8;
+    --newsprint: #e8e2d4;
+    --accent: #c41e1e;
+    --accent2: #1a3a6b;
+    --muted: #6b6456;
+    --rule: #c8bfaf;
+    --highlight: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    background-image: 
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f4f0e8'/%3E%3Ccircle cx='1' cy='1' r='0.4' fill='%23d4cfc4' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* HEADER */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    border-bottom: 4px solid var(--accent);
+  }
+  .masthead-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 32px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 20px;
+  }
+  .masthead-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: #8a8070;
+    line-height: 1.8;
+  }
+  .masthead-meta span { color: var(--paper); }
+  .masthead-title {
+    text-align: center;
+  }
+  .masthead-title h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .masthead-title h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .masthead-title .sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: #8a8070;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  .masthead-actions {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+  }
+  .btn-primary {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn-primary:hover { background: var(--accent); color: white; }
+  .btn-secondary {
+    border-color: #3a3530;
+    color: #8a8070;
+  }
+  .btn-secondary:hover { border-color: var(--paper); color: var(--paper); }
+
+  /* TICKER */
+  .ticker {
+    background: var(--accent);
+    color: white;
+    padding: 6px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticker::before {
+    content: 'ÚLTIMAS';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--ink);
+    padding: 6px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+  }
+  .ticker-track {
+    display: flex;
+    gap: 0;
+    padding-left: 90px;
+    white-space: nowrap;
+    animation: ticker 40s linear infinite;
+  }
+  .ticker-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 0 24px;
+    border-right: 1px solid rgba(255,255,255,0.3);
+  }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* MAIN LAYOUT */
+  .layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .section-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid var(--accent);
+  }
+  .section-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* FUENTES GRID */
+  .fuentes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    border: 2px solid var(--ink);
+  }
+  .fuente-card {
+    background: var(--paper);
+    padding: 0;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .fuente-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .fuente-header:hover { background: #222; }
+  .fuente-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .fuente-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #444;
+  }
+  .fuente-dot.ok { background: #4caf50; }
+  .fuente-dot.loading { background: var(--highlight); animation: pulse 1s infinite; }
+  .fuente-dot.error { background: var(--accent); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .fuente-body {
+    padding: 12px;
+    min-height: 160px;
+  }
+  .fuente-item-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--ink);
+    transition: color 0.15s;
+  }
+  .fuente-item:hover .fuente-item-title { color: var(--accent2); }
+  .fuente-item-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .fuente-empty {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    padding: 20px;
+  }
+
+  /* SIDEBAR */
+  .sidebar { display: flex; flex-direction: column; gap: 28px; }
+
+
+
+  /* WORDCLOUD / TEMAS */
+  .temas-box {
+    border: 2px solid var(--ink);
+    overflow: hidden;
+  }
+  .temas-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+  }
+  .temas-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .temas-body { padding: 16px; }
+  .temas-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 80px;
+  }
+  .tema-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tema-tag:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  .tema-tag.activo { background: var(--ink); color: var(--paper) !important; border-color: var(--ink) !important; }
+
+  /* VISTA TEMA DEL DÍA */
+  .tema-overlay {
+    display: none;
+    position: relative;
+    margin-bottom: 20px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    animation: fadeInDown 0.2s ease;
+  }
+  .tema-overlay.visible { display: block; }
+  @keyframes fadeInDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+  .tema-overlay-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .tema-overlay-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    flex: 1;
+  }
+  .tema-overlay-titulo em {
+    color: var(--highlight);
+    font-style: normal;
+  }
+  .tema-overlay-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #8a8070;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .tema-overlay-cerrar {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid #3a3530;
+    color: #8a8070;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .tema-overlay-cerrar:hover { border-color: var(--paper); color: var(--paper); }
+
+  .tema-overlay-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--rule);
+    border-top: 1px solid #2a2520;
+  }
+  .tema-medio-card {
+    background: var(--paper);
+    overflow: hidden;
+  }
+  .tema-medio-header {
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tema-medio-header.cubre { background: var(--accent2); }
+  .tema-medio-header.no-cubre { background: #2a2520; }
+  .tema-medio-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--paper);
+  }
+  .tema-medio-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    text-transform: uppercase;
+  }
+  .badge-cubre { background: rgba(255,255,255,0.15); color: var(--paper); }
+  .badge-ausente { background: var(--accent); color: white; }
+
+  .tema-medio-body { padding: 10px 12px; min-height: 80px; }
+  .tema-item {
+    display: block;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    color: inherit;
+  }
+  .tema-item:last-child { border-bottom: none; }
+  .tema-item-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--ink);
+    transition: color 0.15s;
+  }
+  .tema-item:hover .tema-item-title { color: var(--accent2); }
+  .tema-item-title mark {
+    background: var(--highlight);
+    color: var(--ink);
+    padding: 0 2px;
+    font-weight: 700;
+  }
+  .tema-ausente-msg {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-align: center;
+    padding: 16px 8px;
+    line-height: 1.6;
+  }
+  .tema-tag.xl { font-size: 14px; font-weight: 500; border-width: 2px; }
+  .tema-tag.lg { font-size: 12px; }
+  .tema-tag.md { font-size: 11px; }
+  .tema-tag.sm { font-size: 10px; }
+
+  .tema-cat-0 { border-color: var(--accent); color: var(--accent); }
+  .tema-cat-1 { border-color: var(--accent2); color: var(--accent2); }
+  .tema-cat-2 { border-color: #5a6e2a; color: #5a6e2a; }
+  .tema-cat-3 { border-color: #7a4a1a; color: #7a4a1a; }
+  .tema-cat-4 { border-color: #4a1a7a; color: #4a1a7a; }
+
+  /* VISTA SOLO ESTE MEDIO */
+  .medio-overlay {
+    display: none;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    animation: fadeInDown 0.2s ease;
+    margin-bottom: 20px;
+  }
+  .medio-overlay.visible { display: block; }
+
+  .medio-overlay-header {
+    color: var(--paper);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .medio-overlay-nombre {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    flex: 1;
+  }
+  .medio-overlay-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .medio-overlay-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .medio-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.15s;
+    text-decoration: none;
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .medio-btn:hover { border-color: white; color: white; }
+  .medio-btn.volver { border-color: rgba(255,255,255,0.2); }
+
+  .medio-overlay-meta {
+    background: rgba(0,0,0,0.25);
+    padding: 6px 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.5);
+    display: flex;
+    gap: 20px;
+  }
+  .medio-overlay-meta span { color: rgba(255,255,255,0.8); }
+
+  .medio-overlay-lista {
+    padding: 0;
+  }
+  .medio-nota {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 0;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.12s;
+    align-items: stretch;
+  }
+  .medio-nota:last-child { border-bottom: none; }
+  .medio-nota:hover { background: var(--newsprint); }
+
+  .medio-nota-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--rule);
+    padding: 16px 0 16px 20px;
+    line-height: 1;
+    align-self: center;
+    transition: color 0.12s;
+    letter-spacing: -0.03em;
+  }
+  .medio-nota:hover .medio-nota-num { color: var(--accent); }
+
+  .medio-nota-body {
+    padding: 16px 20px;
+  }
+  .medio-nota-titulo {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--ink);
+    transition: color 0.12s;
+  }
+  .medio-nota:hover .medio-nota-titulo { color: var(--accent2); }
+  .medio-nota-hora {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 5px;
+    letter-spacing: 0.05em;
+  }
+  .medio-nota-arrow {
+    padding: 16px 20px 16px 0;
+    font-size: 14px;
+    color: var(--rule);
+    align-self: center;
+    transition: color 0.12s, transform 0.12s;
+  }
+  .medio-nota:hover .medio-nota-arrow { color: var(--accent2); transform: translateX(3px); }
+
+  /* MEDIDOR COBERTURA */
+  .cobertura-box {
+    border: 2px solid var(--ink);
+    overflow: hidden;
+  }
+  .cobertura-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+  }
+  .cobertura-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .cobertura-body { padding: 16px; }
+  .cobertura-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 28px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .cobertura-nombre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .cobertura-bar-wrap {
+    height: 6px;
+    background: var(--newsprint);
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .cobertura-bar {
+    height: 100%;
+    background: var(--accent2);
+    transition: width 1s ease;
+  }
+  .cobertura-n {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* FOOTER RULE */
+  .footer-rule {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px 24px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+  }
+  .footer-rule span {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* LOADING STATE */
+  .skeleton {
+    background: linear-gradient(90deg, var(--newsprint) 25%, var(--rule) 50%, var(--newsprint) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s infinite;
+    border-radius: 2px;
+    height: 10px;
+    margin-bottom: 6px;
+  }
+  @keyframes shimmer { from{background-position:200%} to{background-position:-200%} }
+
+  /* STATUS BAR */
+  .status-bar {
+    background: var(--newsprint);
+    border-bottom: 1px solid var(--rule);
+    padding: 5px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 100%;
+  }
+  .status-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .status-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--newsprint); }
+  ::-webkit-scrollbar-thumb { background: var(--rule); }
+
+  /* COUNTDOWN REFRESH */
+  .countdown-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .countdown-ring {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+  .countdown-ring circle {
+    fill: none;
+    stroke: #3a3530;
+    stroke-width: 2;
+  }
+  .countdown-ring .progress {
+    stroke: var(--accent);
+    stroke-dasharray: 38;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transition: stroke-dashoffset 1s linear;
+  }
+  .countdown-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: #8a8070;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  /* FUENTE-ITEM como link semántico */
+  .fuente-item {
+    display: block;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--rule);
+    text-decoration: none;
+    color: inherit;
+  }
+  .fuente-item:last-child { border-bottom: none; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; padding: 16px; }
+    .fuentes-grid { grid-template-columns: repeat(2, 1fr); }
+    .masthead-inner { grid-template-columns: 1fr; text-align: center; }
+    .masthead-meta, .masthead-actions { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-meta">
+      <div>Fuentes activas: <span id="fuentesActivas">—</span> / 9</div>
+      <div>Titulares cargados: <span id="totalTitulares">—</span></div>
+      <div>Última actualización: <span id="lastUpdate">—</span></div>
+    </div>
+    <div class="masthead-title">
+      <h1><em>Agenda</em> Mediática</h1>
+      <div class="sub">Monitor de prensa argentina · Tiempo real</div>
+    </div>
+    <div class="masthead-actions">
+      <button class="btn btn-primary" onclick="cargarTodo()">↻ Actualizar</button>
+      <div class="countdown-wrap" title="Próxima actualización automática">
+        <svg class="countdown-ring" viewBox="0 0 14 14">
+          <circle cx="7" cy="7" r="6"/>
+          <circle class="progress" id="countdownRing" cx="7" cy="7" r="6"/>
+        </svg>
+        <span class="countdown-label" id="countdownLabel">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ticker">
+  <div class="ticker-track" id="tickerTrack">
+    <div class="ticker-item">Cargando titulares...</div>
+    <div class="ticker-item">Cargando titulares...</div>
+  </div>
+</div>
+
+<div class="status-bar">
+  <div class="status-item"><div class="status-dot" style="background:#4caf50"></div> RSS en vivo</div>
+  <div class="status-item"><div class="status-dot" style="background:var(--accent2)"></div> Monitor de prensa</div>
+  <div class="status-item" id="statusGeneral">Iniciando...</div>
+</div>
+
+<div class="layout">
+  <!-- MAIN COLUMN -->
+  <div>
+    <!-- VISTA TEMA DEL DÍA -->
+    <div class="tema-overlay" id="temaOverlay">
+      <div class="tema-overlay-header">
+        <div class="tema-overlay-titulo" id="temaOverlayTitulo">—</div>
+        <span class="tema-overlay-meta" id="temaOverlayMeta"></span>
+        <button class="tema-overlay-cerrar" onclick="cerrarTemaDia()">✕ Volver</button>
+      </div>
+      <div class="tema-overlay-grid" id="temaOverlayGrid"></div>
+    </div>
+
+    <!-- VISTA SOLO ESTE MEDIO -->
+    <div class="medio-overlay" id="medioOverlay">
+      <div class="medio-overlay-header" id="medioOverlayHeader">
+        <div>
+          <div class="medio-overlay-nombre" id="medioOverlayNombre">—</div>
+          <div class="medio-overlay-sub">Todas las notas disponibles</div>
+        </div>
+        <div class="medio-overlay-actions">
+          <a class="medio-btn" id="medioOverlayLink" href="#" target="_blank" rel="noopener noreferrer">↗ Ir al sitio</a>
+          <button class="medio-btn volver" onclick="cerrarMedioOverlay()">✕ Volver</button>
+        </div>
+      </div>
+      <div class="medio-overlay-meta" id="medioOverlayMeta"></div>
+      <div class="medio-overlay-lista" id="medioOverlayLista"></div>
+    </div>
+
+    <div id="vistaNormal">
+    <div class="section-header">
+      <h2>Titulares del día</h2>
+      <span class="section-badge">En vivo</span>
+      <span class="section-count" id="contadorTitulares">0 titulares</span>
+    </div>
+    <div class="fuentes-grid" id="fuentesGrid">
+      <!-- Generado por JS -->
+    </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+  
+    <div class="temas-box">
+      <div class="temas-header" style="display:flex;align-items:center;justify-content:space-between;">
+        <h3>Palabras clave</h3>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.1em;opacity:0.6;text-transform:uppercase;">clic para filtrar</span>
+      </div>
+      <div class="temas-body">
+        <div class="temas-cloud" id="temasCloud">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)">Pendiente de carga...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COBERTURA POR MEDIO -->
+    <div class="cobertura-box">
+      <div class="cobertura-header">
+        <h3>Titulares por medio</h3>
+      </div>
+      <div class="cobertura-body" id="coberturaBody">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)">Pendiente de carga...</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer-rule">
+  <span>© AGENDA MEDIÁTICA · ARGENTINA</span>
+  <span id="footerFecha">—</span>
+  <span>VÍA RSS · TIEMPO REAL</span>
+</div>
+
+<script>
+const FUENTES = [
+  { nombre: 'Clarín',     rss: 'https://www.clarin.com/rss/lo-ultimo/',                              color: '#003087', url: 'https://www.clarin.com' },
+  { nombre: 'Perfil',     rss: 'https://www.perfil.com/feed',                                        color: '#e31837', url: 'https://www.perfil.com' },
+  { nombre: 'La Nación',  rss: 'https://www.lanacion.com.ar/arc/outboundfeeds/rss/',                 color: '#0066cc', url: 'https://www.lanacion.com.ar' },
+  { nombre: 'Página 12',  rss: 'https://www.pagina12.com.ar/arc/outboundfeeds/rss/secciones/el-pais/notas', color: '#8b0000', url: 'https://www.pagina12.com.ar' },
+  { nombre: 'Ámbito',     rss: 'https://www.ambito.com/rss/pages/home.xml',                          color: '#1a1a2e', url: 'https://www.ambito.com' },
+  { nombre: 'El Cronista',rss: 'https://www.cronista.com/files/rss/news.xml',                        color: '#1a3a6b', url: 'https://www.cronista.com' },
+  { nombre: 'Olé',        rss: 'https://www.ole.com.ar/rss/',                                        color: '#f5a623', url: 'https://www.ole.com.ar' },
+  { nombre: 'NYT',        rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',          color: '#000000', url: 'https://www.nytimes.com' },
+  { nombre: 'Economist',  rss: 'https://www.economist.com/international/rss.xml',                    color: '#e3120b', url: 'https://www.economist.com' },
+  { nombre: 'DW',         rss: 'https://rss.dw.com/rdf/rss-en-world',                               color: '#006aff', url: 'https://www.dw.com' },
+  { nombre: 'Vatican',    rss: 'https://www.vaticannews.va/en.rss.xml',                              color: '#ffe066', url: 'https://www.vaticannews.va' },
+  { nombre: 'The Hill',   rss: 'https://thehill.com/homenews/feed/',                                 color: '#1a6b2a', url: 'https://thehill.com' }
+];
+
+// Proxies CORS en orden de preferencia
+function getProxies(rssUrl) {
+  const enc = encodeURIComponent(rssUrl);
+  return [
+    // rss2json primero: más compatible con medios argentinos
+    { url: `https://api.rss2json.com/v1/api.json?rss_url=${enc}`, tipo: 'rss2json' },
+    // AllOrigins: devuelve { contents: "<xml>..." }
+    { url: `https://api.allorigins.win/get?url=${enc}`, tipo: 'allorigins' },
+    // corsproxy.io
+    { url: `https://corsproxy.io/?${enc}`, tipo: 'xml' },
+    // thingproxy como último recurso
+    { url: `https://thingproxy.freeboard.io/fetch/${rssUrl}`, tipo: 'xml' },
+  ];
+}
+
+// Parsear XML RSS a array de items
+function parseXML(xmlStr) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlStr, 'text/xml');
+  const items = Array.from(doc.querySelectorAll('item'));
+  return items.map(el => ({
+    title: el.querySelector('title')?.textContent || '',
+    link:  el.querySelector('link')?.textContent || el.querySelector('link')?.getAttribute('href') || '',
+    pubDate: el.querySelector('pubDate')?.textContent || ''
+  })).filter(i => i.title);
+}
+
+let todosLosTitulares = {};
+let estadoFuentes = {};
+let cargando = false; // debounce flag
+let refreshInterval = null;
+let countdownTimer = null;
+const REFRESH_SECONDS = 5 * 60; // 5 minutos
+
+// ──────────────────────────────
+// INIT
+// ──────────────────────────────
+function init() {
+  actualizarFecha();
+  renderFuentesGrid();
+  cargarTodo();
+}
+
+function actualizarFecha() {
+  const ahora = new Date();
+  const opts = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+  const fecha = ahora.toLocaleDateString('es-AR', opts);
+  document.getElementById('footerFecha').textContent = fecha.toUpperCase();
+}
+
+// ──────────────────────────────
+// RENDER GRID INICIAL
+// ──────────────────────────────
+function renderFuentesGrid() {
+  const grid = document.getElementById('fuentesGrid');
+  grid.innerHTML = FUENTES.map(f => `
+    <div class="fuente-card" id="card-${slugify(f.nombre)}">
+      <div class="fuente-header" onclick="abrirFuente('${f.url}')" title="Abrir ${f.nombre}">
+        <span class="fuente-nombre" onclick="event.stopPropagation(); verMedioSolo('${f.nombre}')" title="Ver solo ${f.nombre}" style="cursor:pointer;text-decoration:none;border-bottom:1px dotted rgba(255,255,255,0.3);padding-bottom:1px;">${f.nombre}</span>
+        <div class="fuente-dot loading" id="dot-${slugify(f.nombre)}"></div>
+      </div>
+      <div class="fuente-body" id="body-${slugify(f.nombre)}">
+        ${skeletonHTML()}
+      </div>
+    </div>
+  `).join('');
+}
+
+function skeletonHTML() {
+  return [80,60,70,55,65].map(w => `<div class="skeleton" style="width:${w}%"></div>`).join('');
+}
+
+function slugify(s) { return s.toLowerCase().replace(/\s/g,'-').replace(/[áà]/g,'a').replace(/[éè]/g,'e').replace(/[íì]/g,'i').replace(/[óò]/g,'o').replace(/[úù]/g,'u'); }
+
+// ──────────────────────────────
+// CARGA RSS
+// ──────────────────────────────
+async function cargarTodo() {
+  if (cargando) return; // debounce: evita re-entradas paralelas
+  cargando = true;
+
+  // Limpiar timers previos
+  clearInterval(refreshInterval);
+  clearInterval(countdownTimer);
+
+  todosLosTitulares = {};
+  estadoFuentes = {};
+  cerrarTemaDia();
+  cerrarMedioOverlay();
+  document.getElementById('statusGeneral').textContent = 'Cargando feeds RSS...';
+  document.getElementById('countdownLabel').textContent = 'cargando...';
+
+  renderFuentesGrid();
+
+  const promesas = FUENTES.map(f => cargarFuente(f));
+  await Promise.allSettled(promesas);
+
+  actualizarMasthead();
+  actualizarTicker();
+  actualizarWordcloud();
+  actualizarCobertura();
+  document.getElementById('statusGeneral').textContent = `Listo · ${new Date().toLocaleTimeString('es-AR')}`;
+  document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('es-AR');
+
+  cargando = false;
+
+  // Iniciar countdown para próxima actualización
+  iniciarCountdown();
+}
+
+function iniciarCountdown() {
+  const ring = document.getElementById('countdownRing');
+  const label = document.getElementById('countdownLabel');
+  const circumference = 2 * Math.PI * 6; // r=6 → ~37.7
+  ring.style.strokeDasharray = circumference;
+
+  let segundosRestantes = REFRESH_SECONDS;
+
+  function actualizarUI() {
+    const mins = Math.floor(segundosRestantes / 60);
+    const secs = segundosRestantes % 60;
+    label.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+    const offset = circumference * (1 - segundosRestantes / REFRESH_SECONDS);
+    ring.style.strokeDashoffset = offset;
+  }
+
+  actualizarUI();
+
+  countdownTimer = setInterval(() => {
+    segundosRestantes--;
+    actualizarUI();
+    if (segundosRestantes <= 0) {
+      clearInterval(countdownTimer);
+      label.textContent = 'actualizando...';
+      cargarTodo();
+    }
+  }, 1000);
+}
+
+async function cargarFuente(fuente) {
+  const slug = slugify(fuente.nombre);
+  const dot = document.getElementById(`dot-${slug}`);
+  const body = document.getElementById(`body-${slug}`);
+  const proxies = getProxies(fuente.rss);
+  let items = [];
+  let lastError = '';
+
+  const fetchConTimeout = (url, ms) => Promise.race([
+    fetch(url),
+    new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout')), ms))
+  ]);
+
+  for (const proxy of proxies) {
+    try {
+      const res = await fetchConTimeout(proxy.url, 8000);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      if (proxy.tipo === 'rss2json') {
+        const data = await res.json();
+        if (data.status === 'error') throw new Error(data.message || 'rss2json error');
+        items = (data.items || []).slice(0, 5);
+      } else if (proxy.tipo === 'allorigins') {
+        const data = await res.json();
+        const xml = data.contents;
+        if (!xml) throw new Error('Contenido vacío');
+        items = parseXML(xml).slice(0, 5);
+      } else {
+        // xml directo
+        const xml = await res.text();
+        items = parseXML(xml).slice(0, 5);
+      }
+
+      if (!items.length) throw new Error('Sin items');
+      break; // éxito, salir del loop
+
+    } catch(e) {
+      lastError = e.message;
+      continue; // intentar próximo proxy
+    }
+  }
+
+  if (items.length) {
+    todosLosTitulares[fuente.nombre] = items;
+    estadoFuentes[slug] = 'ok';
+    dot.className = 'fuente-dot ok';
+
+    // Construcción segura con <a> semántico — sin innerHTML con links interpolados
+    body.innerHTML = '';
+    items.forEach(item => {
+      const a = document.createElement('a');
+      a.className = 'fuente-item';
+      a.href = item.link || '#';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+
+      const titulo = document.createElement('div');
+      titulo.className = 'fuente-item-title';
+      titulo.textContent = limpiarTitulo(item.title); // textContent: sin XSS
+
+      a.appendChild(titulo);
+
+      if (item.pubDate) {
+        const meta = document.createElement('div');
+        meta.className = 'fuente-item-meta';
+        meta.textContent = formatTime(new Date(item.pubDate));
+        a.appendChild(meta);
+      }
+
+      body.appendChild(a);
+    });
+  } else {
+    estadoFuentes[slug] = 'error';
+    dot.className = 'fuente-dot error';
+    body.innerHTML = `<div class="fuente-empty">No se pudo cargar.<br><span style="font-size:9px;color:var(--accent)">${lastError}</span></div>`;
+  }
+}
+
+function limpiarTitulo(t) {
+  return (t || '').replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").trim();
+}
+
+function formatTime(d) {
+  const ahora = new Date();
+  const diff = Math.round((ahora - d) / 60000);
+  if (diff < 1) return 'Ahora';
+  if (diff < 60) return `Hace ${diff} min`;
+  if (diff < 1440) return `Hace ${Math.round(diff/60)}h`;
+  return d.toLocaleDateString('es-AR');
+}
+
+function abrirFuente(url) { window.open(url, '_blank'); }
+
+// ──────────────────────────────
+// MASTHEAD COUNTERS
+// ──────────────────────────────
+function actualizarMasthead() {
+  const activos = Object.values(estadoFuentes).filter(v => v === 'ok').length;
+  const total = Object.values(todosLosTitulares).reduce((a, b) => a + b.length, 0);
+  document.getElementById('fuentesActivas').textContent = activos;
+  document.getElementById('totalTitulares').textContent = total;
+  document.getElementById('contadorTitulares').textContent = `${total} titulares`;
+}
+
+// ──────────────────────────────
+// TICKER
+// ──────────────────────────────
+function actualizarTicker() {
+  const todos = [];
+  for (const [medio, items] of Object.entries(todosLosTitulares)) {
+    items.slice(0,3).forEach(i => todos.push(`[${medio.toUpperCase()}] ${limpiarTitulo(i.title)}`));
+  }
+  if (!todos.length) return;
+  const html = [...todos, ...todos].map(t => `<div class="ticker-item">${t}</div>`).join('');
+  document.getElementById('tickerTrack').innerHTML = html;
+}
+
+// ──────────────────────────────
+// WORDCLOUD
+// ──────────────────────────────
+function actualizarWordcloud() {
+  const stopwords = new Set(['de','la','el','los','las','en','y','a','con','que','del','por','un','una','se','al','es','su','sus','para','más','sobre','no','le','los','las','como','pero','fue','ha','han','son','lo','les','si','ya','o','también','tras','ante','entre','hay','nuevo','nueva','este','esta','ser','sin','puede','tiene','cuando','donde','parte','bajo','cada','así','todo','toda']);
+
+  const freq = {};
+  for (const items of Object.values(todosLosTitulares)) {
+    for (const item of items) {
+      const palabras = limpiarTitulo(item.title).toLowerCase().split(/\W+/);
+      for (const p of palabras) {
+        if (p.length > 3 && !stopwords.has(p)) {
+          freq[p] = (freq[p] || 0) + 1;
+        }
+      }
+    }
+  }
+
+  const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,30);
+  const max = sorted[0]?.[1] || 1;
+  const cats = ['tema-cat-0','tema-cat-1','tema-cat-2','tema-cat-3','tema-cat-4'];
+
+  const html = sorted.map(([palabra, count], i) => {
+    const ratio = count / max;
+    const size = ratio > 0.7 ? 'xl' : ratio > 0.5 ? 'lg' : ratio > 0.3 ? 'md' : 'sm';
+    const cat = cats[i % cats.length];
+    return `<span class="tema-tag ${size} ${cat}" title="${count} menciones · clic para ver cobertura" onclick="verTemaDia('${palabra}')">${palabra}</span>`;
+  }).join('');
+
+  document.getElementById('temasCloud').innerHTML = html || '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--muted)">Sin datos</span>';
+}
+
+// ──────────────────────────────
+// VISTA TEMA DEL DÍA
+// ──────────────────────────────
+let temaActivoActual = null;
+
+function verTemaDia(palabra) {
+  temaActivoActual = palabra;
+
+  // Marcar tag activo
+  document.querySelectorAll('.tema-tag').forEach(t => t.classList.remove('activo'));
+  document.querySelectorAll('.tema-tag').forEach(t => {
+    if (t.textContent.trim() === palabra) t.classList.add('activo');
+  });
+
+  const termino = palabra.toLowerCase();
+  const overlay = document.getElementById('temaOverlay');
+  const grid = document.getElementById('temaOverlayGrid');
+
+  // Construir resultado por medio
+  let mediosCubren = 0;
+  let totalTitulares = 0;
+
+  const cards = FUENTES.map(f => {
+    const items = todosLosTitulares[f.nombre] || [];
+    const slug = slugify(f.nombre);
+    const estado = estadoFuentes[slug];
+
+    if (estado === 'error') return null; // fuente fallida, no mostrar
+
+    const coincidentes = items.filter(i =>
+      limpiarTitulo(i.title).toLowerCase().includes(termino)
+    );
+
+    const cubre = coincidentes.length > 0;
+    if (cubre) { mediosCubren++; totalTitulares += coincidentes.length; }
+
+    const headerClass = cubre ? 'cubre' : 'no-cubre';
+    const badgeClass  = cubre ? 'badge-cubre' : 'badge-ausente';
+    const badgeLabel  = cubre ? `${coincidentes.length} titular${coincidentes.length > 1 ? 'es' : ''}` : 'no cubre';
+
+    let bodyHtml = '';
+    if (cubre) {
+      // Construir items con <a> real y highlight de la palabra
+      bodyHtml = coincidentes.map(item => {
+        const titulo = limpiarTitulo(item.title);
+        const highlighted = titulo.replace(
+          new RegExp(`(${termino})`, 'gi'),
+          '<mark>$1</mark>'
+        );
+        const link = item.link || '#';
+        return `<a class="tema-item" href="${encodeURI(link)}" target="_blank" rel="noopener noreferrer">
+          <div class="tema-item-title">${highlighted}</div>
+        </a>`;
+      }).join('');
+    } else {
+      bodyHtml = `<div class="tema-ausente-msg">Sin titulares<br>sobre "${palabra}"</div>`;
+    }
+
+    return `
+      <div class="tema-medio-card">
+        <div class="tema-medio-header ${headerClass}">
+          <span class="tema-medio-nombre">${f.nombre}</span>
+          <span class="tema-medio-badge ${badgeClass}">${badgeLabel}</span>
+        </div>
+        <div class="tema-medio-body">${bodyHtml}</div>
+      </div>`;
+  }).filter(Boolean);
+
+  grid.innerHTML = cards.join('');
+
+  // Header del overlay
+  const totalMedios = Object.values(estadoFuentes).filter(v => v === 'ok').length;
+  document.getElementById('temaOverlayTitulo').innerHTML = `Tema: <em>${palabra}</em>`;
+  document.getElementById('temaOverlayMeta').textContent =
+    `${mediosCubren} de ${totalMedios} medios · ${totalTitulares} titular${totalTitulares !== 1 ? 'es' : ''}`;
+
+  // Mostrar overlay, ocultar vista normal
+  overlay.classList.add('visible');
+  document.getElementById('vistaNormal').style.display = 'none';
+
+  // Scroll suave al overlay
+  overlay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function cerrarTemaDia() {
+  temaActivoActual = null;
+  const overlay = document.getElementById('temaOverlay');
+  if (overlay) overlay.classList.remove('visible');
+  const vn = document.getElementById('vistaNormal');
+  if (vn) vn.style.display = 'block';
+  document.querySelectorAll('.tema-tag').forEach(t => t.classList.remove('activo'));
+}
+
+// ──────────────────────────────
+// VISTA SOLO ESTE MEDIO
+// ──────────────────────────────
+function verMedioSolo(nombreMedio) {
+  // Cerrar otras vistas superpuestas si están abiertas
+  cerrarTemaDia();
+
+  const fuente = FUENTES.find(f => f.nombre === nombreMedio);
+  if (!fuente) return;
+
+  const items = todosLosTitulares[nombreMedio];
+  const slug  = slugify(nombreMedio);
+  const estado = estadoFuentes[slug];
+
+  const overlay  = document.getElementById('medioOverlay');
+  const header   = document.getElementById('medioOverlayHeader');
+  const lista    = document.getElementById('medioOverlayLista');
+  const metaBar  = document.getElementById('medioOverlayMeta');
+  const linkBtn  = document.getElementById('medioOverlayLink');
+
+  // Aplicar color del medio al header
+  header.style.background = fuente.color || 'var(--accent2)';
+
+  document.getElementById('medioOverlayNombre').textContent = fuente.nombre;
+  linkBtn.href = fuente.url;
+
+  if (!items || !items.length || estado === 'error') {
+    metaBar.innerHTML = `<span style="color:rgba(255,255,255,0.4)">Sin datos disponibles para este medio</span>`;
+    lista.innerHTML = `<div style="padding:32px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">No se pudieron cargar los titulares.<br>Probá actualizar el feed.</div>`;
+  } else {
+    const ahora = new Date();
+    const primeraHora = items[0].pubDate ? formatTime(new Date(items[0].pubDate)) : '—';
+    metaBar.innerHTML = `${items.length} titular${items.length !== 1 ? 'es' : ''} &nbsp;·&nbsp; Última nota: <span>${primeraHora}</span> &nbsp;·&nbsp; Actualizado: <span>${ahora.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'})}</span>`;
+
+    lista.innerHTML = '';
+    items.forEach((item, idx) => {
+      const titulo = limpiarTitulo(item.title);
+      const link   = item.link || '#';
+      const hora   = item.pubDate ? formatTime(new Date(item.pubDate)) : '';
+
+      const a = document.createElement('a');
+      a.className = 'medio-nota';
+      a.href = link;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+
+      const numEl = document.createElement('div');
+      numEl.className = 'medio-nota-num';
+      numEl.textContent = String(idx + 1).padStart(2, '0');
+
+      const bodyEl = document.createElement('div');
+      bodyEl.className = 'medio-nota-body';
+
+      const tituloEl = document.createElement('div');
+      tituloEl.className = 'medio-nota-titulo';
+      tituloEl.textContent = titulo;
+
+      bodyEl.appendChild(tituloEl);
+
+      if (hora) {
+        const horaEl = document.createElement('div');
+        horaEl.className = 'medio-nota-hora';
+        horaEl.textContent = hora;
+        bodyEl.appendChild(horaEl);
+      }
+
+      const arrowEl = document.createElement('div');
+      arrowEl.className = 'medio-nota-arrow';
+      arrowEl.textContent = '→';
+
+      a.appendChild(numEl);
+      a.appendChild(bodyEl);
+      a.appendChild(arrowEl);
+      lista.appendChild(a);
+    });
+  }
+
+  // Mostrar overlay, ocultar vista normal
+  overlay.classList.add('visible');
+  document.getElementById('vistaNormal').style.display = 'none';
+  overlay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function cerrarMedioOverlay() {
+  const overlay = document.getElementById('medioOverlay');
+  if (overlay) overlay.classList.remove('visible');
+  const vn = document.getElementById('vistaNormal');
+  if (vn) vn.style.display = 'block';
+}
+
+// ──────────────────────────────
+// COBERTURA
+// ──────────────────────────────
+function actualizarCobertura() {
+  const max = Math.max(...Object.values(todosLosTitulares).map(a=>a.length), 1);
+  const html = FUENTES.map(f => {
+    const items = todosLosTitulares[f.nombre] || [];
+    const pct = Math.round((items.length / max) * 100);
+    const slug = slugify(f.nombre);
+    const estado = estadoFuentes[slug];
+    return `
+      <div class="cobertura-item">
+        <span class="cobertura-nombre">${f.nombre}</span>
+        <div class="cobertura-bar-wrap">
+          <div class="cobertura-bar" style="width:${estado==='ok'?pct:0}%;background:${estado==='error'?'var(--accent)':'var(--accent2)'}"></div>
+        </div>
+        <span class="cobertura-n">${estado==='error'?'—':items.length}</span>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('coberturaBody').innerHTML = html;
+}
+
+// ──────────────────────────────
+// ARRANCAR
+// ──────────────────────────────
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
