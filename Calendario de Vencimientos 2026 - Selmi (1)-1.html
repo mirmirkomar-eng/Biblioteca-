@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario de Vencimientos 2026 — Estudio Selmi & Asociadas</title>
+
+<link rel="icon" type="image/png" href="https://i.postimg.cc/kg7H278v/KRONOS-ICONO.png">
+
+<link rel="apple-touch-icon" href="https://i.postimg.cc/kg7H278v/KRONOS-ICONO.png">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+  :root {
+    --bg:#f5f4f0; --surface:#fff; --surface2:#f0efe9; --border:#dddbd3; --border2:#c9c7bf;
+    --text:#1a1917; --text2:#6b6a63; --text3:#9e9d95;
+    --arca:#1d4ed8; --arca-bg:#eff6ff; --arca-border:#bfdbfe;
+    --arba:#15803d; --arba-bg:#f0fdf4; --arba-border:#bbf7d0;
+    --mun:#b45309;  --mun-bg:#fffbeb;  --mun-border:#fde68a;
+    --otros:#6b21a8; --otros-bg:#faf5ff; --otros-border:#e9d5ff;
+    --comarb:#0e7490; --comarb-bg:#ecfeff; --comarb-border:#a5f3fc;
+    --jun:#9333ea;  --jun-bg:#faf5ff;  --jun-border:#e9d5ff;
+    --bronce:#7c5c2e;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;min-height:100vh;}
+
+  /* HEADER BRONCE */
+  .site-header{
+    background: linear-gradient(135deg, #8b6914 0%, #6b4f10 50%, #5a3e0a 100%);
+    color:#f5e6c8;padding:28px 40px 24px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
+  }
+  .site-header h1{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:500;letter-spacing:-.02em;line-height:1.2;color:#fdf0d5;}
+  .site-header p{font-size:12px;color:#c8a96e;margin-top:4px;font-weight:300;}
+  .header-badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+  .hbadge{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid;font-weight:500;white-space:nowrap;}
+  .hbadge.arca{background:rgba(239,246,255,.15);border-color:rgba(191,219,254,.5);color:#bfdbfe;}
+  .hbadge.arba{background:rgba(240,253,244,.15);border-color:rgba(187,247,208,.5);color:#bbf7d0;}
+  .hbadge.mun{background:rgba(255,251,235,.15);border-color:rgba(253,230,138,.5);color:#fde68a;}
+  .hbadge.comarb{background:rgba(236,254,255,.15);border-color:rgba(165,243,252,.5);color:#a5f3fc;}
+
+  /* NAV */
+  .month-strip{background:var(--surface);border-bottom:1px solid var(--border);padding:0 40px;display:flex;overflow-x:auto;position:sticky;top:0;z-index:100;}
+  .month-strip::-webkit-scrollbar{height:2px;} .month-strip::-webkit-scrollbar-thumb{background:var(--border2);}
+  .mbtn{font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:14px 18px;border:none;background:transparent;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+  .mbtn:hover{color:var(--text);}
+  .mbtn.active{color:var(--text);border-bottom:2px solid var(--text);font-weight:500;}
+  .mbtn.jun-tab{color:var(--jun);font-weight:500;}
+  .mbtn.jun-tab.active{border-bottom:2px solid var(--jun);}
+  .mbtn.mes-actual::after{content:'';display:inline-block;width:5px;height:5px;background:#16a34a;border-radius:50%;margin-left:5px;vertical-align:middle;}
+
+  /* BUSCADOR */
+  .search-bar{padding:10px 40px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;}
+  .search-bar input{font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:7px 14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);width:280px;outline:none;transition:border-color .15s;}
+  .search-bar input:focus{border-color:var(--text);}
+  .search-bar input::placeholder{color:var(--text3);}
+  .search-hint{font-size:11px;color:var(--text3);}
+  .search-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:flex-start;justify-content:center;padding-top:80px;}
+  .search-overlay.show{display:flex;}
+  .search-box{background:var(--surface);border-radius:10px;border:1px solid var(--border);width:580px;max-width:95vw;max-height:70vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15);}
+  .search-box-header{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .search-box-header span{font-size:12px;color:var(--text2);}
+  .search-box-header button{font-size:20px;background:none;border:none;cursor:pointer;color:var(--text3);line-height:1;}
+  .sri{padding:11px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+  .sri:last-child{border-bottom:none;} .sri:hover{background:var(--surface2);}
+  .sri-oblig{font-size:13px;font-weight:500;} .sri-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+  .sri-fecha{font-family:'IBM Plex Mono',monospace;font-weight:500;color:var(--text);}
+  mark{background:#fef3c7;color:var(--text);border-radius:2px;padding:0 2px;}
+
+  /* MAIN */
+  .main{max-width:1100px;margin:0 auto;padding:32px 40px 60px;}
+  .alert-bar{display:none;background:var(--jun-bg);border:1px solid var(--jun-border);border-radius:var(--radius);padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--jun);font-weight:500;}
+  .alert-bar.show{display:block;}
+  .month-header{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+  .month-header h2{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:500;letter-spacing:-.02em;}
+  .month-header span{font-size:13px;color:var(--text3);}
+
+  /* TABS IMPUESTO */
+  .imp-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto;}
+  .imp-tab{font-family:'IBM Plex Sans',sans-serif;font-size:12px;padding:9px 15px;border:none;background:transparent;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+  .imp-tab:hover{color:var(--text);}
+  .imp-tab.active{color:var(--text);border-bottom:2px solid var(--text);font-weight:500;}
+
+  /* TABS JUNIO */
+  .jun-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto;}
+  .jtab{font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:10px 18px;border:none;background:transparent;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+  .jtab:hover{color:var(--text);} .jtab.active{color:var(--jun);border-bottom:2px solid var(--jun);font-weight:500;}
+
+  .section{margin-bottom:28px;}
+  .section-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .section-label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);}
+  .src-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;border:1px solid;letter-spacing:.04em;}
+  .src-badge.arca{background:var(--arca-bg);border-color:var(--arca-border);color:var(--arca);}
+  .src-badge.arba{background:var(--arba-bg);border-color:var(--arba-border);color:var(--arba);}
+  .src-badge.mun{background:var(--mun-bg);border-color:var(--mun-border);color:var(--mun);}
+  .src-badge.otros{background:var(--otros-bg);border-color:var(--otros-border);color:var(--otros);}
+  .src-badge.comarb{background:var(--comarb-bg);border-color:var(--comarb-border);color:var(--comarb);}
+
+  .vtable{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;font-size:13px;}
+  .vtable th{background:var(--surface2);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);}
+  .vtable td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  .vtable tr:last-child td{border-bottom:none;} .vtable tr:hover td{background:var(--surface2);}
+  .vtable td.fecha{font-family:'IBM Plex Mono',monospace;font-size:12px;white-space:nowrap;font-weight:500;width:100px;}
+  .vtable td.det{color:var(--text3);font-size:12px;}
+  .vtable td.est-col{width:36px;text-align:center;}
+  .est-btn{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;font-size:11px;}
+  .est-btn:hover{border-color:var(--text2);}
+  .est-btn.ok{background:#16a34a;border-color:#16a34a;color:#fff;}
+
+  .note{margin-top:10px;padding:10px 14px;background:var(--surface2);border-left:3px solid var(--border2);border-radius:0 var(--radius) var(--radius) 0;font-size:12px;color:var(--text2);line-height:1.6;}
+  .note strong{color:var(--text);font-weight:500;}
+
+  .site-footer{background:var(--surface);border-top:1px solid var(--border);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+  .site-footer p{font-size:12px;color:var(--text3);}
+  .site-footer strong{color:var(--text2);font-weight:500;}
+
+  @media(max-width:640px){
+    .site-header{padding:20px 20px 16px;flex-direction:column;align-items:flex-start;}
+    .main{padding:20px 16px 40px;} .month-strip{padding:0 16px;}
+    .search-bar{padding:10px 16px;}
+    .site-footer{padding:16px 20px;flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <h1>Calendario de Vencimientos 2026</h1>
+    <p>Estudio Selmi &amp; Asociadas · ARCA · ARBA · Municipalidad de Pergamino</p>
+  </div>
+  <div class="header-badges">
+    <span class="hbadge arca">ARCA</span>
+    <span class="hbadge arba">ARBA</span>
+    <span class="hbadge mun">Municipalidad</span>
+    <span class="hbadge comarb">Comisión Arbitral</span>
+  </div>
+</header>
+
+<nav class="month-strip" id="monthStrip"></nav>
+
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-box">
+    <div class="search-box-header">
+      <span id="searchCount"></span>
+      <button onclick="closeSearch()">×</button>
+    </div>
+    <div id="searchList"></div>
+  </div>
+</div>
+
+<main class="main" id="mainContent"></main>
+
+<footer class="site-footer">
+  <p>Fuentes: <strong>ARCA</strong> (Errepar, Calendario Anual 2026) · <strong>ARBA</strong> (web.arba.gov.ar) · <strong>Municipalidad de Pergamino</strong> (Ordenanza Fiscal 2026)</p>
+  <p>Actualizado <strong>marzo 2026</strong>. Verificar cambios en los organismos oficiales.</p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// IVA por terminación de CUIT — mes = mes de vencimiento (no período)
+// ═══════════════════════════════════════════════════════════════════════════════
+const IVA = {
+  Enero:      ["19","20","21","22","23"],
+  Febrero:    ["18","19","20","23","24"],
+  Marzo:      ["18","19","20","25","26"],
+  Abril:      ["20","21","22","23","24"],
+  Mayo:       ["18","19","20","21","22"],
+  Junio:      ["18","19","22","23","24"],
+  Julio:      ["20","21","22","23","24"],
+  Agosto:     ["18","19","20","21","24"],
+  Septiembre: ["18","21","22","23","24"],
+  Octubre:    ["19","20","21","22","23"],
+  Noviembre:  ["18","19","20","24","25"],
+  Diciembre:  ["18","21","22","23","28"]
+};
+const MABBR = {Enero:"ene",Febrero:"feb",Marzo:"mar",Abril:"abr",Mayo:"may",Junio:"jun",Julio:"jul",Agosto:"ago",Septiembre:"sep",Octubre:"oct",Noviembre:"nov",Diciembre:"dic"};
+function ivaRows(mes) {
+  const f=IVA[mes],a=MABBR[mes];
+  return ["0-1","2-3","4-5","6-7","8-9"].map((t,i)=>({oblig:"IVA — DDJJ",fecha:`${f[i]} ${a}`,det:`Terminación CUIT ${t}`}));
+}
+function libroIVAExentoSec(mes) {
+  const a=MABBR[mes];
+  return {titulo:"Libro IVA Digital — Sujetos Exentos", fuente:"arca",
+    items:[{oblig:"Libro IVA Digital",fecha:`15 ${a}`,det:"Todos los CUIT — período anterior"}],
+    nota:"Plazo: primeros 15 días corridos del mes siguiente al período a informar. Aplica a sujetos exentos en el IVA."};
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HELPERS — secciones reutilizables
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// IIBB Locales: recibe las fechas del mes en que VENCE (5 filas por terminación)
+function iibbLocalSec(titulo, mes, dias) {
+  // dias: array de 5 strings ["23 ene", "24 ene", ...]
+  return {titulo, fuente:"arba", items:[
+    {oblig:"IIBB Local",fecha:dias[0],det:"CUIT 0-1"},
+    {oblig:"IIBB Local",fecha:dias[1],det:"CUIT 2-3"},
+    {oblig:"IIBB Local",fecha:dias[2],det:"CUIT 4-5"},
+    {oblig:"IIBB Local",fecha:dias[3],det:"CUIT 6-7"},
+    {oblig:"IIBB Local",fecha:dias[4],det:"CUIT 8-9"},
+  ]};
+}
+// IIBB CM: 4 grupos
+function iibbCMSec(titulo, dias) {
+  return {titulo, fuente:"comarb", items:[
+    {oblig:"IIBB CM",fecha:dias[0],det:"CUIT 0-2"},
+    {oblig:"IIBB CM",fecha:dias[1],det:"CUIT 3-5"},
+    {oblig:"IIBB CM",fecha:dias[2],det:"CUIT 6-7"},
+    {oblig:"IIBB CM",fecha:dias[3],det:"CUIT 8-9"},
+  ]};
+}
+// Municipalidad — se repiten cada mes con fecha del mes en curso
+function munSecs(a, dia_mono, dia_tsh) {
+  const prevMap = {ene:"diciembre",feb:"enero",mar:"febrero",abr:"marzo",may:"abril",jun:"mayo",jul:"junio",ago:"julio",sep:"agosto",oct:"septiembre",nov:"octubre",dic:"noviembre"};
+  const per = prevMap[a] || a;
+  return [
+    {titulo:`TSH — Régimen General (período ${per})`, fuente:"mun",
+     items:[{oblig:"TSH",fecha:`${dia_tsh} ${a}`,det:"Para todos los CUIT"}]},
+    {titulo:`Monotasa — Régimen Simplificado para Pequeños Contribuyentes (período ${per})`, fuente:"mun",
+     items:[{oblig:"Monotasa",fecha:`${dia_mono} ${a}`,det:"Para todos los CUIT"}]},
+    {titulo:"Red Urbana - Colón (ARQUIFRAMME COLON SA)", fuente:"mun",
+     items:[{oblig:"Red Urbana - Colón",fecha:`10 ${a}`,det:"ARQUIFRAMME COLON SA — todos los CUIT"}]},
+  ];
+}
+// Otros — Controladores Fiscales
+function otrosSecs(a) {
+  return [
+    {titulo:"Reportes Mensuales - CONTROLADORES FISCALES", fuente:"arca",
+     items:[
+       {oblig:"F.8010 / F.8011 — RI y Exentos en IVA",fecha:`05 ${a}`,det:"Período anterior"},
+       {oblig:"F.8010 / F.8011 — Monotributistas",    fecha:`07 ${a}`,det:"Período anterior"},
+     ]},
+  ];
+}
+
+// Anticipos Gcias — PJ (Sociedades) — aplica todos los meses
+function anticiposPJSec(f0, f1, f2) {
+  return {titulo:"Anticipos Gcias — Sociedades (PJ)", fuente:"arca", items:[
+    {oblig:"Anticipo Gcias Soc.", fecha:f0, det:"CUIT 0-3"},
+    {oblig:"Anticipo Gcias Soc.", fecha:f1, det:"CUIT 4-6"},
+    {oblig:"Anticipo Gcias Soc.", fecha:f2, det:"CUIT 7-9"},
+  ]};
+}
+// Anticipos Gcias — PH + BP — aplica solo en Feb(4°), Abr(5°), Ago(1°), Oct(2°), Dic(3°)
+// Nota (1) del Calendario ARCA 2026. Mismas fechas que PJ del mes. Sin Fondo Cooperativo.
+function anticiposPHSec(num, perFiscal, f0, f1, f2) {
+  return {titulo:`Anticipos Gcias — ${num}° Anticipo PH y BP (per. fiscal ${perFiscal})`, fuente:"arca", items:[
+    {oblig:`${num}° Ant. Gcias/BP — PH`, fecha:f0, det:"CUIT 0-3 — Personas humanas y Bienes Personales"},
+    {oblig:`${num}° Ant. Gcias/BP — PH`, fecha:f1, det:"CUIT 4-6 — Personas humanas y Bienes Personales"},
+    {oblig:`${num}° Ant. Gcias/BP — PH`, fecha:f2, det:"CUIT 7-9 — Personas humanas y Bienes Personales"},
+  ], nota:`${num}° anticipo de Ganancias y Bienes Personales — personas humanas — período fiscal ${perFiscal}. (Nota 1, Calendario ARCA 2026. No incluye Fondo Cooperativo.)`};
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MESES_DATA
+// Criterio: cada sección muestra los vencimientos CON FECHA EN ESE MES.
+// ARCA: la fila de un mes en el calendario = vence en ese mes (período anterior).
+// ARBA: anticipo del mes anterior vence al mes siguiente → aparece en el mes en que cae.
+// ═══════════════════════════════════════════════════════════════════════════════
+const MESES_DATA = {
+
+  // ── ENERO ──────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 12° (diciembre) vence en enero
+  // IIBB CM:      anticipo 12° (diciembre) vence en enero
+  Enero:{alerta:null, secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Enero"),nota:"Vence el IVA del período diciembre."},
+    libroIVAExentoSec("Enero"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"05 ene",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"06 ene",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"07 ene",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 ene",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 ene",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"12 ene",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"13 ene",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades — DDJJ y Anticipos",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 ene",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"14 ene",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"15 ene",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 ene","14 ene","15 ene"),
+    {titulo:"Convenio Multilateral — Anticipo 12° (PERIODO DICIEMBRE)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"15 ene",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"16 ene",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"19 ene",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"20 ene",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE — Retenciones y Percepciones",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"21 ene",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"22 ene",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"23 ene",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 ene",det:"DDJJ — CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"12 ene",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"13 ene",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 12° (período diciembre)","ene",["19 ene","20 ene","21 ene","22 ene","23 ene"]),
+    ...munSecs("ene","20","23"),
+    ...otrosSecs("ene"),
+  ]},
+
+  // ── FEBRERO ────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 1° (enero) vence en febrero
+  // IIBB CM:      anticipo 1° (enero) vence en febrero
+  Febrero:{alerta:"Vence el 4° anticipo de Ganancias y Bienes Personales de personas humanas (per. fiscal 2025).", secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Febrero")},
+    libroIVAExentoSec("Febrero"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"05 feb",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"06 feb",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"09 feb",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 feb",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 feb",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"10 feb",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"11 feb",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 feb",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"18 feb",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"19 feb",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 feb","18 feb","19 feb"),
+    anticiposPHSec(4,"2025","13 feb","18 feb","19 feb"),
+    {titulo:"Convenio Multilateral — Anticipo 1° (PERIODO ENERO)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"13 feb",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"18 feb",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"19 feb",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"20 feb",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"20 feb",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"23 feb",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"24 feb",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 feb",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"10 feb",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"11 feb",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 1° (período enero)","feb",["23 feb","24 feb","25 feb","26 feb","27 feb"]),
+    ...munSecs("feb","20","23"),
+    ...otrosSecs("feb"),
+  ]},
+
+  // ── MARZO ──────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 2° (febrero) vence en marzo
+  // IIBB CM:      anticipo 2° (febrero) vence en marzo
+  Marzo:{alerta:null, secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Marzo")},
+    libroIVAExentoSec("Marzo"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"05 mar",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"06 mar",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"09 mar",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 mar",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 mar",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"10 mar",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"11 mar",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 mar",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"16 mar",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"17 mar",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 mar","16 mar","17 mar"),
+    {titulo:"Convenio Multilateral — Anticipo 2° (PERIODO FEBRERO)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"13 mar",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"16 mar",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"17 mar",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"18 mar",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"25 mar",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"26 mar",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"27 mar",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 mar",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"10 mar",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"11 mar",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 2° (período febrero)","mar",["25 mar","26 mar","27 mar","30 mar","31 mar"]),
+    ...munSecs("mar","20","25"),
+    ...otrosSecs("mar"),
+  ]},
+
+  // ── ABRIL ──────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 3° (marzo) vence en abril + DDJJ Anual 2025
+  // IIBB CM:      anticipo 3° (marzo) vence en abril
+  Abril:{alerta:"DDJJ Anual IIBB 2025 — Contribuyentes locales ARBA (vence en abril). · 5° anticipo Ganancias y Bienes Personales PH.", secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Abril")},
+    libroIVAExentoSec("Abril"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"06 abr",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"07 abr",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"08 abr",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 abr",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 abr",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"10 abr",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"13 abr",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 abr",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"14 abr",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"15 abr",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 abr","14 abr","15 abr"),
+    anticiposPHSec(5,"2025","13 abr","14 abr","15 abr"),
+    {titulo:"Convenio Multilateral — Anticipo 3° (PERIODO MARZO)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"15 abr",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"16 abr",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"17 abr",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"20 abr",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"21 abr",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"22 abr",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"23 abr",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 abr",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"10 abr",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"13 abr",det:"CUIT 7-9"}]},
+    {titulo:"IIBB BUENOS AIRES — DDJJ Anual 2025",fuente:"arba",items:[{oblig:"DDJJ Anual IIBB 2025",fecha:"20 abr",det:"CUIT 0-1"},{oblig:"DDJJ Anual IIBB 2025",fecha:"21 abr",det:"CUIT 2-3"},{oblig:"DDJJ Anual IIBB 2025",fecha:"22 abr",det:"CUIT 4-5"},{oblig:"DDJJ Anual IIBB 2025",fecha:"23 abr",det:"CUIT 6-7"},{oblig:"DDJJ Anual IIBB 2025",fecha:"24 abr",det:"CUIT 8-9"}],nota:"Presentación DDJJ anual IIBB 2025 para contribuyentes locales (ARBA)."},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 3° (período marzo)","abr",["20 abr","21 abr","22 abr","23 abr","24 abr"]),
+    ...munSecs("abr","20","23"),
+    ...otrosSecs("abr"),
+  ]},
+
+  // ── MAYO ───────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 4° (abril) vence en mayo
+  // IIBB CM:      anticipo 4° (abril) vence en mayo
+  Mayo:{alerta:null, secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Mayo")},
+    libroIVAExentoSec("Mayo"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"05 may",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"06 may",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"07 may",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 may",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"11 may",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"12 may",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"13 may",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 may",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"14 may",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"15 may",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 may","14 may","15 may"),
+    {titulo:"Convenio Multilateral — Anticipo 4° (PERIODO ABRIL)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"15 may",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"18 may",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"19 may",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"20 may",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"21 may",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"22 may",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"26 may",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"11 may",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"12 may",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"13 may",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 4° (período abril)","may",["18 may","19 may","20 may","21 may","22 may"]),
+    ...munSecs("may","20","22"),
+    ...otrosSecs("may"),
+  ]},
+
+  // ── JUNIO ──────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 5° (mayo) vence en junio
+  // IIBB CM:      anticipo 5° (mayo) vence en junio
+  Junio:{alerta:"Mes de alta concentración de vencimientos anuales: Ganancias PH, Bienes Personales, Cedular e Impuesto a las Ganancias 4ª cat. → pestaña Gcias./BP. La DDJJ Anual de Convenio Multilateral (F. CM05, vence 30/6) está en la pestaña CM.", secciones:[
+    // ── GCIAS./BP ──────────────────────────────────────────────────
+    {titulo:"Ganancias PH y sucesiones — DDJJ per. fiscal 2025",fuente:"arca",items:[{oblig:"Ganancias PH — DDJJ",fecha:"11 jun",det:"CUIT 0-3"},{oblig:"Ganancias PH — DDJJ",fecha:"12 jun",det:"CUIT 4-6"},{oblig:"Ganancias PH — DDJJ",fecha:"16 jun",det:"CUIT 7-9"},{oblig:"Ganancias PH — Ingreso saldo",fecha:"12 jun",det:"CUIT 0-3"},{oblig:"Ganancias PH — Ingreso saldo",fecha:"16 jun",det:"CUIT 4-6"},{oblig:"Ganancias PH — Ingreso saldo",fecha:"17 jun",det:"CUIT 7-9"}]},
+    {titulo:"Bienes Personales — DDJJ per. fiscal 2025",fuente:"arca",items:[{oblig:"BP — DDJJ",fecha:"11 jun",det:"CUIT 0-3"},{oblig:"BP — DDJJ",fecha:"12 jun",det:"CUIT 4-6"},{oblig:"BP — DDJJ",fecha:"16 jun",det:"CUIT 7-9"},{oblig:"BP — Ingreso saldo",fecha:"12 jun",det:"CUIT 0-3"},{oblig:"BP — Ingreso saldo",fecha:"16 jun",det:"CUIT 4-6"},{oblig:"BP — Ingreso saldo",fecha:"17 jun",det:"CUIT 7-9"}]},
+    {titulo:"BP — Acciones y participaciones (resp. sustitutos)",fuente:"arca",items:[{oblig:"BP Acc. — DDJJ",fecha:"11 jun",det:"CUIT 0-3"},{oblig:"BP Acc. — DDJJ",fecha:"12 jun",det:"CUIT 4-6"},{oblig:"BP Acc. — DDJJ",fecha:"16 jun",det:"CUIT 7-9"},{oblig:"BP Acc. — Ingreso saldo",fecha:"12 jun",det:"CUIT 0-3"},{oblig:"BP Acc. — Ingreso saldo",fecha:"16 jun",det:"CUIT 4-6"},{oblig:"BP Acc. — Ingreso saldo",fecha:"17 jun",det:"CUIT 7-9"}],nota:"Comprende sociedades comerciales que actúen como responsables sustitutos (RG AFIP 2151)."},
+    {titulo:"Impuesto Cedular — per. fiscal 2025",fuente:"arca",items:[{oblig:"Cedular — DDJJ",fecha:"19 jun",det:"CUIT 0-3"},{oblig:"Cedular — DDJJ",fecha:"22 jun",det:"CUIT 4-6"},{oblig:"Cedular — DDJJ",fecha:"23 jun",det:"CUIT 7-9"},{oblig:"Cedular — Ingreso saldo",fecha:"22 jun",det:"CUIT 0-3"},{oblig:"Cedular — Ingreso saldo",fecha:"23 jun",det:"CUIT 4-6"},{oblig:"Cedular — Ingreso saldo",fecha:"24 jun",det:"CUIT 7-9"}],nota:"Norma: RG AFIP 4468, art. 6."},
+    {titulo:"Empleados — Detalle de bienes y liq. anual ret. 4ª categoría",fuente:"arca",items:[{oblig:"Detalle bienes (todos)",fecha:"30 jun",det:"Todos los CUIT — RG AFIP 4003"},{oblig:"Liq. anual ret. 4ª cat.",fecha:"09 jun",det:"CUIT 0-3"},{oblig:"Liq. anual ret. 4ª cat.",fecha:"10 jun",det:"CUIT 4-6"},{oblig:"Liq. anual ret. 4ª cat.",fecha:"11 jun",det:"CUIT 7-9"}],nota:"Se informa en período 5/2026 de la DJ SICORE según RG AFIP 4003, art. 23."},
+    // ── IVA ────────────────────────────────────────────────────────
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Junio")},
+    libroIVAExentoSec("Junio"),
+    // ── AUTÓNOMOS ──────────────────────────────────────────────────
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"05 jun",det:"CUIT 0-2"},{oblig:"Autónomos",fecha:"08 jun",det:"CUIT 3-5"},{oblig:"Autónomos",fecha:"09 jun",det:"CUIT 6-9"}]},
+    // ── MONOTRIBUTO ────────────────────────────────────────────────
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"22 jun",det:"CUIT 0 a 9"}]},
+    // ── SICOSS ─────────────────────────────────────────────────────
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 jun",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"10 jun",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"11 jun",det:"CUIT 7-9"}]},
+    // ── GCIAS SOC ──────────────────────────────────────────────────
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"16 jun",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"17 jun",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"18 jun",det:"CUIT 7-9"}]},
+    anticiposPJSec("16 jun","17 jun","18 jun"),
+    // ── SICORE ─────────────────────────────────────────────────────
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"22 jun",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"23 jun",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"24 jun",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 jun",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"10 jun",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"11 jun",det:"CUIT 7-9"}]},
+    // ── IIBB ───────────────────────────────────────────────────────
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 5° (período mayo)","jun",["22 jun","23 jun","24 jun","25 jun","26 jun"]),
+    iibbCMSec("Convenio Multilateral — Anticipo 5° (PERIODO MAYO)",["16 jun","17 jun","18 jun","19 jun"]),
+    {titulo:"IIBB CM — DDJJ Anual 2025",fuente:"comarb",items:[{oblig:"DDJJ Anual IIBB CM 2025",fecha:"30 jun",det:"Todos los CUIT (0 a 9)"}],nota:"No confundir con el F. CM05 de ARCA. Son obligaciones distintas ante organismos distintos."},
+    // ── MUNICIPALIDAD ──────────────────────────────────────────────
+    ...munSecs("jun","22","23"),
+    // ── OTROS ──────────────────────────────────────────────────────
+    ...otrosSecs("jun"),
+  ]},
+
+  // ── JULIO ──────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 6° (junio) vence en julio
+  // IIBB CM:      anticipo 6° (junio) vence en julio
+  Julio:{alerta:"Vence el Régimen de Información de Participaciones Societarias y Rentas Pasivas — RG AFIP 4697 (Info al 31/12/2025). Visible en la pestaña Otros.", secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Julio")},
+    libroIVAExentoSec("Julio"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"06 jul",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"07 jul",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"08 jul",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 jul",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"13 jul",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"14 jul",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"15 jul",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 jul",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"14 jul",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"15 jul",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 jul","14 jul","15 jul"),
+    {titulo:"Convenio Multilateral — Anticipo 6° (PERIODO JUNIO)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"15 jul",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"16 jul",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"17 jul",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"20 jul",det:"CUIT 8-9"}]},
+    {titulo:"Régimen Información Participaciones Societarias — RG 4697",fuente:"arca",items:[{oblig:"Inf. Part. Societarias",fecha:"28 jul",det:"CUIT 0-3 — Info al 31/12/2025"},{oblig:"Inf. Part. Societarias",fecha:"29 jul",det:"CUIT 4-6"},{oblig:"Inf. Part. Societarias",fecha:"30 jul",det:"CUIT 7-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"21 jul",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"22 jul",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"23 jul",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"13 jul",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"14 jul",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"15 jul",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 6° (período junio)","jul",["20 jul","21 jul","22 jul","23 jul","24 jul"]),
+    ...munSecs("jul","20","23"),
+    ...otrosSecs("jul"),
+  ]},
+
+  // ── AGOSTO ─────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 7° (julio) vence en agosto
+  // IIBB CM:      anticipo 7° (julio) vence en agosto
+  Agosto:{alerta:"Vence el 1° anticipo de Ganancias y Bienes Personales del período fiscal 2026 (personas humanas).", secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Agosto")},
+    libroIVAExentoSec("Agosto"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"05 ago",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"06 ago",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"07 ago",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 ago",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"10 ago",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"11 ago",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"12 ago",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 ago",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"14 ago",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"18 ago",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 ago","14 ago","18 ago"),
+    anticiposPHSec(1,"2026","13 ago","14 ago","18 ago"),
+    {titulo:"Convenio Multilateral — Anticipo 7° (PERIODO AGOSTO)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"14 ago",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"18 ago",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"19 ago",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"20 ago",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"21 ago",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"24 ago",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"25 ago",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"10 ago",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"11 ago",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"12 ago",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 7° (período julio)","ago",["24 ago","25 ago","26 ago","27 ago","28 ago"]),
+    ...munSecs("ago","20","24"),
+    ...otrosSecs("ago"),
+  ]},
+
+  // ── SEPTIEMBRE ─────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 8° (agosto) vence en septiembre
+  // IIBB CM:      anticipo 8° (agosto) vence en septiembre
+  Septiembre:{alerta:null, secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Septiembre")},
+    libroIVAExentoSec("Septiembre"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"07 sep",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"08 sep",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"09 sep",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"21 sep",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 sep",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"10 sep",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"11 sep",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"14 sep",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"15 sep",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"16 sep",det:"CUIT 7-9"}]},
+    anticiposPJSec("14 sep","15 sep","16 sep"),
+    {titulo:"Convenio Multilateral — Anticipo 8° (PERIODO AGOSTO)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"15 sep",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"16 sep",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"17 sep",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"18 sep",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"21 sep",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"22 sep",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"23 sep",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 sep",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"10 sep",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"11 sep",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 8° (período agosto)","sep",["21 sep","22 sep","23 sep","24 sep","25 sep"]),
+    ...munSecs("sep","21","23"),
+    ...otrosSecs("sep"),
+  ]},
+
+  // ── OCTUBRE ────────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 9° (septiembre) vence en octubre
+  // IIBB CM:      anticipo 9° (septiembre) vence en octubre
+  Octubre:{alerta:"Vence el 2° anticipo de Ganancias y Bienes Personales del período fiscal 2026 (personas humanas).", secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Octubre")},
+    libroIVAExentoSec("Octubre"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"05 oct",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"06 oct",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"07 oct",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 oct",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 oct",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"13 oct",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"14 oct",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 oct",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"14 oct",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"15 oct",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 oct","14 oct","15 oct"),
+    anticiposPHSec(2,"2026","13 oct","14 oct","15 oct"),
+    {titulo:"Convenio Multilateral — Anticipo 9° (PERIODO SEPTIEMBRE)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"15 oct",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"16 oct",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"19 oct",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"20 oct",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"21 oct",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"22 oct",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"23 oct",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 oct",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"13 oct",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"14 oct",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 9° (período septiembre)","oct",["19 oct","20 oct","21 oct","22 oct","23 oct"]),
+    ...munSecs("oct","20","23"),
+    ...otrosSecs("oct"),
+  ]},
+
+  // ── NOVIEMBRE ──────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 10° (octubre) vence en noviembre
+  // IIBB CM:      anticipo 10° (octubre) vence en noviembre
+  Noviembre:{alerta:"ATENCIÓN: El 6/11 es el Día del Empleado Bancario. Autónomos CUIT 4-6 traslada al 9/11.", secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Noviembre")},
+    libroIVAExentoSec("Noviembre"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"05 nov",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"09 nov",det:"CUIT 4-6 — trasladado (Día Empleado Bancario)"},{oblig:"Autónomos",fecha:"10 nov",det:"CUIT 7-9"}],nota:"El 6/11 es el Día del Empleado Bancario — CUIT 4-6 trasladado al 9/11."},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"20 nov",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 nov",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"10 nov",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"11 nov",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"13 nov",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"16 nov",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"17 nov",det:"CUIT 7-9"}]},
+    anticiposPJSec("13 nov","16 nov","17 nov"),
+    {titulo:"Convenio Multilateral — Anticipo 10° (PERIODO OCTUBRE)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"13 nov",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"16 nov",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"17 nov",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"18 nov",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"24 nov",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"25 nov",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"26 nov",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 nov",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"10 nov",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"11 nov",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 10° (período octubre)","nov",["24 nov","25 nov","26 nov","27 nov","30 nov"]),
+    ...munSecs("nov","19","23"),
+    ...otrosSecs("nov"),
+  ]},
+
+  // ── DICIEMBRE ──────────────────────────────────────────────────────────────
+  // IIBB Locales: anticipo 11° (noviembre) vence en diciembre
+  // IIBB CM:      anticipo 11° (noviembre) vence en diciembre
+  Diciembre:{alerta:"Vence el 3° anticipo Gcias/BP del per. fiscal 2026. El anticipo 12° de IIBB (per. diciembre) vence en enero 2027.", secciones:[
+    {titulo:"IVA — DDJJ mensual",fuente:"arca",items:ivaRows("Diciembre")},
+    libroIVAExentoSec("Diciembre"),
+    {titulo:"Autónomos",fuente:"arca",items:[{oblig:"Autónomos",fecha:"09 dic",det:"CUIT 0-3"},{oblig:"Autónomos",fecha:"10 dic",det:"CUIT 4-6"},{oblig:"Autónomos",fecha:"11 dic",det:"CUIT 7-9"}]},
+    {titulo:"Monotributo",fuente:"arca",items:[{oblig:"Monotributo",fecha:"21 dic",det:"CUIT 0 a 9"}]},
+    {titulo:"Empleadores — SICOSS",fuente:"arca",items:[{oblig:"SICOSS",fecha:"09 dic",det:"CUIT 0-3"},{oblig:"SICOSS",fecha:"10 dic",det:"CUIT 4-6"},{oblig:"SICOSS",fecha:"11 dic",det:"CUIT 7-9"}]},
+    {titulo:"Ganancias Sociedades",fuente:"arca",items:[{oblig:"Ganancias Soc.",fecha:"14 dic",det:"CUIT 0-3"},{oblig:"Ganancias Soc.",fecha:"15 dic",det:"CUIT 4-6"},{oblig:"Ganancias Soc.",fecha:"16 dic",det:"CUIT 7-9"}]},
+    anticiposPJSec("14 dic","15 dic","16 dic"),
+    anticiposPHSec(3,"2026","14 dic","15 dic","16 dic"),
+    {titulo:"Convenio Multilateral — Anticipo 11° (PERIODO NOVIEMBRE)",fuente:"comarb",items:[{oblig:"CM Anticipos",fecha:"15 dic",det:"CUIT 0-2"},{oblig:"CM Anticipos",fecha:"16 dic",det:"CUIT 3-5"},{oblig:"CM Anticipos",fecha:"17 dic",det:"CUIT 6-7"},{oblig:"CM Anticipos",fecha:"18 dic",det:"CUIT 8-9"}]},
+    {titulo:"SICORE / SIRE",fuente:"arca",items:[{oblig:"SICORE 1ª quincena",fecha:"21 dic",det:"CUIT 0-3"},{oblig:"SICORE 1ª quincena",fecha:"22 dic",det:"CUIT 4-6"},{oblig:"SICORE 1ª quincena",fecha:"23 dic",det:"CUIT 7-9"},{oblig:"SICORE 2ª quincena",fecha:"09 dic",det:"CUIT 0-3"},{oblig:"SICORE 2ª quincena",fecha:"10 dic",det:"CUIT 4-6"},{oblig:"SICORE 2ª quincena",fecha:"11 dic",det:"CUIT 7-9"}]},
+    iibbLocalSec("IIBB BUENOS AIRES — Anticipo 11° (período noviembre)","dic",["21 dic","22 dic","23 dic","28 dic","29 dic"]),
+    ...munSecs("dic","21","23"),
+    ...otrosSecs("dic"),
+  ]},
+};
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ENGINE
+// ═══════════════════════════════════════════════════════════════════════════════
+const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const mesActualNum = new Date().getMonth();
+let mesActivo = meses[mesActualNum];
+let impTabActivo = "IVA";
+
+const IMP_TABS = [
+  {label:"IVA",             fn: s => s.titulo.startsWith("IVA") || s.titulo.startsWith("Libro IVA")},
+  {label:"Autónomos",       fn: s => s.titulo.startsWith("Autónomos")},
+  {label:"Monotributo",     fn: s => s.titulo.startsWith("Monotributo")},
+  {label:"SICOSS",          fn: s => s.titulo.includes("SICOSS")},
+  {label:"SICORE",          fn: s => s.titulo.includes("SICORE")},
+  {label:"Gcias. Soc.",     fn: s => s.titulo.includes("Ganancias Soc")},
+  {label:"Anticipos Gcias", fn: s => s.titulo.startsWith("Anticipos Gcias")},
+  {label:"Gcias./BP",       fn: s => s.titulo.includes("Ganancias PH") || s.titulo.startsWith("Bienes Personales") || (s.titulo.startsWith("BP —") && s.fuente==="arca") || s.titulo.includes("Cedular") || s.titulo.includes("Empleados — Detalle")},
+  {label:"CM",              fn: s => s.titulo.startsWith("Convenio Multilateral") || s.titulo.startsWith("IIBB CM")},
+  {label:"IIBB Locales",    fn: s => s.fuente==="arba" && !s.titulo.startsWith("IIBB CM")},
+  {label:"Municipalidad",   fn: s => s.fuente==="mun"},
+  {label:"Otros",           fn: s => s.titulo.includes("CONTROLADORES FISCALES") || s.titulo.includes("Participaciones Societarias")},
+];
+
+// Estado (localStorage) — clave basada en contenido para persistir entre versiones del archivo
+// Si el cliente abre el nuevo HTML en el mismo navegador, conserva el estado anterior
+const _ITEMS={}; // lookup posición → item, para evitar escaping en onclick
+function eKey(m,oblig,det){
+  const s=v=>(v||'').toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  return `v26_${s(m)}_${s(oblig)}_${s(det)}`;
+}
+function getPres(m,oblig,det){return localStorage.getItem(eKey(m,oblig,det))==="1";}
+function togglePres(m,si,ri,btn){
+  const it=_ITEMS[`${m}|${si}|${ri}`];
+  if(!it)return;
+  const k=eKey(m,it.oblig,it.det);
+  localStorage.getItem(k)==="1"?localStorage.removeItem(k):localStorage.setItem(k,"1");
+  const p=localStorage.getItem(k)==="1";
+  btn.classList.toggle("ok",p);
+  btn.title=p?"Marcar pendiente":"Marcar presentado";
+}
+
+// Índice global para búsqueda
+const IDX=[];
+function buildIndex(){
+  IDX.length=0;
+  meses.forEach(mes=>{
+    const d=MESES_DATA[mes];
+    d.secciones.forEach(sec=>sec.items.forEach(it=>IDX.push({mes,tab:null,sec:sec.titulo,oblig:it.oblig,fecha:it.fecha,det:it.det})));
+  });
+}
+
+
+// Render
+function badge(f){
+  const map={arca:['arca','ARCA'],arba:['arba','ARBA'],mun:['mun','Municipalidad'],otros:['otros','Otros'],comarb:['comarb','Comisión Arbitral']};
+  const [cls,lbl]=map[f]||['arca','ARCA'];
+  return `<span class="src-badge ${cls}">${lbl}</span>`;
+}
+
+function renderTable(items,mes,si){
+  items.forEach((it,ri)=>{_ITEMS[`${mes}|${si}|${ri}`]=it;});
+  return `<table class="vtable">
+    <thead><tr><th></th><th>Obligación</th><th>Fecha</th><th>Detalle / CUIT</th></tr></thead>
+    <tbody>${items.map((it,ri)=>{
+      const p=getPres(mes,it.oblig,it.det);
+      return `<tr><td class="est-col"><button class="est-btn ${p?'ok':''}" title="${p?'Marcar pendiente':'Marcar presentado'}" onclick="togglePres('${mes}',${si},${ri},this)">✓</button></td><td>${it.oblig}</td><td class="fecha">${it.fecha}</td><td class="det">${it.det||''}</td></tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function renderSecs(secs,mes,filtro){
+  const list=filtro?secs.filter(filtro):secs;
+  if(!list.length)return '<p style="color:var(--text3);font-size:13px;padding:8px 0">Sin vencimientos para esta selección.</p>';
+  return list.map(s=>{
+    const si=secs.indexOf(s);
+    return `<div class="section"><div class="section-head"><span class="section-label">${s.titulo}</span>${badge(s.fuente)}</div>${renderTable(s.items,mes,si)}${s.nota?`<div class="note"><strong>Nota:</strong> ${s.nota}</div>`:''}</div>`;
+  }).join('');
+}
+
+function renderImpTabs(){
+  return `<nav class="imp-tabs">${IMP_TABS.map(t=>`<button class="imp-tab ${t.label===impTabActivo?'active':''}" onclick="setImpTab('${t.label}')">${t.label}</button>`).join('')}</nav>`;
+}
+
+function renderMain(){
+  const main=document.getElementById('mainContent');
+  const d=MESES_DATA[mesActivo];
+  const fn=IMP_TABS.find(t=>t.label===impTabActivo)?.fn;
+  main.innerHTML=`
+    ${d.alerta?`<div class="alert-bar show">${d.alerta}</div>`:''}
+    <div class="month-header"><h2>${mesActivo} 2026</h2><span>Vencimientos del mes</span></div>
+    ${renderImpTabs()}
+    ${renderSecs(d.secciones,mesActivo,fn)}`;
+}
+
+function renderNav(){
+  document.getElementById('monthStrip').innerHTML=meses.map((m,i)=>
+    `<button class="mbtn ${m==='Junio'?'jun-tab':''} ${m===mesActivo?'active':''} ${i===mesActualNum?'mes-actual':''}" onclick="setMes('${m}')">${m==='Junio'?m+' ★':m}</button>`
+  ).join('');
+}
+
+function setMes(m){mesActivo=m;renderNav();renderMain();}
+function setImpTab(t){impTabActivo=t;renderMain();}
+
+buildIndex();
+renderNav();
+renderMain();
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){e.preventDefault();document.getElementById('searchInput').focus();}
+  if(e.key==='Escape')closeSearch();
+});
+</script>
+</b
