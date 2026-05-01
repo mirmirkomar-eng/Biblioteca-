@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca Personal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0d0b;
+    --surface: #161510;
+    --surface2: #1e1c16;
+    --border: #2e2b22;
+    --accent: #c9a84c;
+    --accent2: #7a6030;
+    --text: #e8e0cc;
+    --text2: #a09880;
+    --text3: #5a5040;
+    --fac: #5b8fa8;
+    --fac-bg: rgba(91,143,168,0.08);
+    --hob: #a86b5b;
+    --hob-bg: rgba(168,107,91,0.08);
+    --danger: #c05050;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 3rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .logo-area h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .logo-area h1 span {
+    color: var(--accent);
+  }
+
+  .logo-area p {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text3);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 2rem;
+    padding-bottom: 0.2rem;
+  }
+
+  .stat {
+    text-align: right;
+  }
+
+  .stat-n {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .stat-l {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-top: 0.2rem;
+  }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    gap: 0;
+  }
+
+  nav button {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text3);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.8rem 1.4rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    top: 1px;
+  }
+
+  nav button:hover { color: var(--text2); }
+
+  nav button.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* MAIN */
+  main {
+    padding: 2rem 3rem;
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+  }
+
+  /* TOOLBAR */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover { border-color: var(--text3); }
+  .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(201,168,76,0.06); }
+  .filter-btn.fac.active { border-color: var(--fac); color: var(--fac); background: var(--fac-bg); }
+  .filter-btn.hob.active { border-color: var(--hob); color: var(--hob); background: var(--hob-bg); }
+
+  .add-btn {
+    background: var(--accent);
+    border: none;
+    color: var(--bg);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.15s;
+  }
+
+  .add-btn:hover { opacity: 0.85; }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    padding: 1.4rem;
+    position: relative;
+    transition: background 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-height: 160px;
+  }
+
+  .card:hover { background: var(--surface2); }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .card-cat {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+
+  .card-cat.fac {
+    color: var(--fac);
+    background: var(--fac-bg);
+    border: 1px solid rgba(91,143,168,0.2);
+  }
+
+  .card-cat.hob {
+    color: var(--hob);
+    background: var(--hob-bg);
+    border: 1px solid rgba(168,107,91,0.2);
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 0.3rem;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .card:hover .card-actions { opacity: 1; }
+
+  .icon-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+
+  .icon-btn:hover { color: var(--text); border-color: var(--text3); }
+  .icon-btn.del:hover { color: var(--danger); border-color: var(--danger); }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .card-author {
+    font-size: 0.78rem;
+    color: var(--text2);
+    font-style: italic;
+  }
+
+  .card-rating {
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    margin-top: auto;
+    color: var(--accent);
+  }
+
+  .card-notes {
+    font-size: 0.75rem;
+    color: var(--text3);
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 0.5rem;
+    margin-top: 0.3rem;
+    font-style: italic;
+  }
+
+  .card-date {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text3);
+    margin-top: auto;
+  }
+
+  /* EMPTY STATE */
+  .empty {
+    grid-column: 1/-1;
+    background: var(--surface);
+    padding: 4rem;
+    text-align: center;
+  }
+
+  .empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+  }
+
+  .empty p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 480px;
+    padding: 2rem;
+    transform: translateY(10px);
+    transition: transform 0.2s;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 0.4rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.15s;
+    resize: vertical;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--accent2);
+  }
+
+  .form-group select option { background: var(--surface); }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+  }
+
+  .btn-cancel {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+
+  .btn-cancel:hover { border-color: var(--text3); color: var(--text); }
+
+  .btn-save {
+    background: var(--accent);
+    border: none;
+    color: var(--bg);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: opacity 0.15s;
+  }
+
+  .btn-save:hover { opacity: 0.85; }
+
+  /* STATUS CHANGE QUICK BTN */
+  .move-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text3);
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .move-btn:hover {
+    border-color: var(--accent2);
+    color: var(--accent);
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-wrap input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 2px;
+    outline: none;
+    width: 200px;
+    transition: border-color 0.15s, width 0.2s;
+  }
+
+  .search-wrap input:focus {
+    border-color: var(--accent2);
+    width: 240px;
+  }
+
+  .search-wrap input::placeholder { color: var(--text3); }
+
+  /* EDITOR WYSIWYG */
+  .editor-wrap {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .editor-wrap:focus-within {
+    border-color: var(--accent2);
+  }
+
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0.35rem 0.5rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .tb-btn {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--text2);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.78rem;
+    width: 26px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.12s;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .tb-btn:hover {
+    background: var(--surface2);
+    border-color: var(--border);
+    color: var(--text);
+  }
+
+  .tb-btn.active {
+    background: rgba(201,168,76,0.12);
+    border-color: var(--accent2);
+    color: var(--accent);
+  }
+
+  .tb-quote {
+    font-size: 0.9rem;
+  }
+
+  .tb-sep {
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+    margin: 0 3px;
+    flex-shrink: 0;
+  }
+
+  .editor-body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    padding: 0.65rem 0.75rem;
+    min-height: 110px;
+    max-height: 240px;
+    overflow-y: auto;
+    outline: none;
+    word-break: break-word;
+  }
+
+  .editor-body:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text3);
+    pointer-events: none;
+  }
+
+  /* Estilos del contenido dentro del editor */
+  .editor-body ul, .editor-body ol {
+    padding-left: 1.4em;
+    margin: 0.3em 0;
+  }
+
+  .editor-body li { margin: 0.15em 0; }
+
+  .editor-body blockquote {
+    border-left: 2px solid var(--accent2);
+    margin: 0.4em 0;
+    padding: 0.3em 0.75em;
+    color: var(--text2);
+    font-style: italic;
+    background: rgba(201,168,76,0.04);
+  }
+
+  .editor-body b, .editor-body strong { color: var(--text); font-weight: 600; }
+  .editor-body i, .editor-body em { font-style: italic; color: var(--text2); }
+  .editor-body u { text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Notas en cards — renderizar HTML */
+  .card-notes {
+    font-size: 0.75rem;
+    color: var(--text3);
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 0.5rem;
+    margin-top: 0.3rem;
+  }
+
+  .card-notes ul, .card-notes ol { padding-left: 1.2em; margin: 0.2em 0; }
+  .card-notes li { margin: 0.1em 0; }
+  .card-notes blockquote {
+    border-left: 2px solid var(--accent2);
+    padding: 0.2em 0.5em;
+    margin: 0.3em 0;
+    font-style: italic;
+    color: var(--text3);
+  }
+  .card-notes b, .card-notes strong { color: var(--text2); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    header, main { padding: 1.2rem; }
+    .header-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .search-wrap input { width: 150px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="logo-area">
+      <h1>Mi <span>Biblioteca</span></h1>
+      <p>Registro personal de lecturas</p>
+    </div>
+    <div class="header-stats" id="stats"></div>
+  </div>
+  <nav>
+    <button class="active" data-tab="leyendo">📖 Leyendo</button>
+    <button data-tab="leidos">✓ Leídos</button>
+    <button data-tab="deseados">◇ Deseados</button>
+  </nav>
+</header>
+
+<main>
+  <div class="toolbar">
+    <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="todos">Todos</button>
+        <button class="filter-btn fac" data-filter="facultad">Facultad</button>
+        <button class="filter-btn hob" data-filter="hobbie">Hobbie</button>
+      </div>
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Buscar...">
+      </div>
+    </div>
+    <button class="add-btn" id="addBtn">+ Agregar libro</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2 id="modalTitle">Agregar libro</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Título *</label>
+        <input type="text" id="fTitle" placeholder="Título del libro">
+      </div>
+      <div class="form-group">
+        <label>Autor</label>
+        <input type="text" id="fAuthor" placeholder="Autor/a">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Categoría *</label>
+        <select id="fCat">
+          <option value="hobbie">Hobbie</option>
+          <option value="facultad">Facultad</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Estado *</label>
+        <select id="fStatus">
+          <option value="leyendo">Leyendo</option>
+          <option value="leidos">Leído</option>
+          <option value="deseados">Deseado</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" id="ratingGroup" style="display:none">
+      <label>Rating (1–5 ★)</label>
+      <input type="number" id="fRating" min="1" max="5" placeholder="4">
+    </div>
+    <div class="form-group">
+      <label>Notas</label>
+      <div class="editor-wrap">
+        <div class="editor-toolbar" id="editorToolbar">
+          <button type="button" class="tb-btn" data-cmd="bold" title="Negrita (Ctrl+B)"><b>B</b></button>
+          <button type="button" class="tb-btn" data-cmd="italic" title="Itálica (Ctrl+I)"><i>I</i></button>
+          <button type="button" class="tb-btn" data-cmd="underline" title="Subrayado (Ctrl+U)"><u>U</u></button>
+          <div class="tb-sep"></div>
+          <button type="button" class="tb-btn" data-cmd="insertUnorderedList" title="Lista con viñetas">≡</button>
+          <button type="button" class="tb-btn" data-cmd="insertOrderedList" title="Lista numerada">1.</button>
+          <div class="tb-sep"></div>
+          <button type="button" class="tb-btn tb-quote" data-cmd="blockquote" title="Cita">❝</button>
+          <div class="tb-sep"></div>
+          <button type="button" class="tb-btn" data-cmd="removeFormat" title="Limpiar formato">✕</button>
+        </div>
+        <div id="fNotes" class="editor-body" contenteditable="true" data-placeholder="Reflexiones, citas de página, viñetas..."></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelBtn">Cancelar</button>
+      <button class="btn-save" id="saveBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── STORE ───────────────────────────────────────────────────────────────
+  const KEY = 'biblioteca_v1';
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || []; }
+    catch { return []; }
+  }
+
+  function save(data) {
+    localStorage.setItem(KEY, JSON.stringify(data));
+  }
+
+  let books = load();
+  let editId = null;
+  let activeTab = 'leyendo';
+  let activeFilter = 'todos';
+  let searchQ = '';
+
+  // ─── RENDER ──────────────────────────────────────────────────────────────
+  function stars(n) {
+    return '★'.repeat(n) + '☆'.repeat(5 - n);
+  }
+
+  function catLabel(c) {
+    return c === 'facultad' ? 'Facultad' : 'Hobbie';
+  }
+
+  function statusLabel(s) {
+    return { leyendo: '→ Leyendo', leidos: '✓ Leído', deseados: '◇ Deseado' }[s];
+  }
+
+  function nextStatuses(current) {
+    const opts = ['leyendo', 'leidos', 'deseados'].filter(s => s !== current);
+    return opts;
+  }
+
+  function fmt(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function render() {
+    const grid = document.getElementById('grid');
+    let filtered = books.filter(b => b.status === activeTab);
+    if (activeFilter !== 'todos') filtered = filtered.filter(b => b.cat === activeFilter);
+    if (searchQ) {
+      const q = searchQ.toLowerCase();
+      filtered = filtered.filter(b =>
+        b.title.toLowerCase().includes(q) ||
+        (b.author || '').toLowerCase().includes(q) ||
+        (b.notes || '').toLowerCase().includes(q)
+      );
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="empty"><div class="empty-icon">◻</div><p>Ningún libro aquí todavía.</p></div>`;
+    } else {
+      grid.innerHTML = filtered.map(b => {
+        const nexts = nextStatuses(b.status);
+        const moveBtns = nexts.map(s =>
+          `<button class="move-btn" onclick="moveBook('${b.id}','${s}')">${statusLabel(s)}</button>`
+        ).join('');
+        return `
+          <div class="card">
+            <div class="card-top">
+              <span class="card-cat ${b.cat}">${catLabel(b.cat)}</span>
+              <div class="card-actions">
+                <button class="icon-btn" onclick="editBook('${b.id}')">✎</button>
+                <button class="icon-btn del" onclick="deleteBook('${b.id}')">✕</button>
+              </div>
+            </div>
+            <div class="card-title">${escape(b.title)}</div>
+            ${b.author ? `<div class="card-author">${escape(b.author)}</div>` : ''}
+            ${b.status === 'leidos' && b.rating ? `<div class="card-rating">${stars(+b.rating)}</div>` : ''}
+            ${b.notes && b.notes !== '<br>' ? `<div class="card-notes">${b.notes}</div>` : ''}
+            <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:auto;padding-top:0.6rem;">${moveBtns}</div>
+            <div class="card-date">${fmt(b.date)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    renderStats();
+  }
+
+  function escape(str) {
+    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function renderStats() {
+    const leyendo = books.filter(b => b.status === 'leyendo').length;
+    const leidos  = books.filter(b => b.status === 'leidos').length;
+    const deseados = books.filter(b => b.status === 'deseados').length;
+    document.getElementById('stats').innerHTML = `
+      <div class="stat"><div class="stat-n">${leyendo}</div><div class="stat-l">Leyendo</div></div>
+      <div class="stat"><div class="stat-n">${leidos}</div><div class="stat-l">Leídos</div></div>
+      <div class="stat"><div class="stat-n">${deseados}</div><div class="stat-l">Deseados</div></div>
+    `;
+  }
+
+  // ─── TABS & FILTERS ──────────────────────────────────────────────────────
+  document.querySelectorAll('nav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTab = btn.dataset.tab;
+      render();
+    });
+  });
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      render();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchQ = e.target.value.trim();
+    render();
+  });
+
+  // ─── MODAL ───────────────────────────────────────────────────────────────
+  const modal = document.getElementById('modal');
+
+  document.getElementById('fStatus').addEventListener('change', function() {
+    document.getElementById('ratingGroup').style.display =
+      this.value === 'leidos' ? 'block' : 'none';
+  });
+
+  function openModal(book = null) {
+    editId = book ? book.id : null;
+    document.getElementById('modalTitle').textContent = book ? 'Editar libro' : 'Agregar libro';
+    document.getElementById('fTitle').value = book ? book.title : '';
+    document.getElementById('fAuthor').value = book ? (book.author || '') : '';
+    document.getElementById('fCat').value = book ? book.cat : 'hobbie';
+    document.getElementById('fStatus').value = book ? book.status : activeTab;
+    document.getElementById('fRating').value = book ? (book.rating || '') : '';
+    document.getElementById('fNotes').innerHTML = book ? (book.notes || '') : '';
+    document.getElementById('ratingGroup').style.display =
+      (book && book.status === 'leidos') ? 'block' : 'none';
+    modal.classList.add('open');
+    document.getElementById('fTitle').focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    editId = null;
+  }
+
+  document.getElementById('addBtn').addEventListener('click', () => openModal());
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openModal(); }
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const title = document.getElementById('fTitle').value.trim();
+    if (!title) { document.getElementById('fTitle').focus(); return; }
+
+    const book = {
+      id: editId || crypto.randomUUID(),
+      title,
+      author: document.getElementById('fAuthor').value.trim(),
+      cat: document.getElementById('fCat').value,
+      status: document.getElementById('fStatus').value,
+      rating: document.getElementById('fRating').value || null,
+      notes: document.getElementById('fNotes').innerHTML.trim(),
+      date: editId ? (books.find(b => b.id === editId)?.date || new Date().toISOString()) : new Date().toISOString(),
+    };
+
+    if (editId) {
+      books = books.map(b => b.id === editId ? book : b);
+    } else {
+      books.push(book);
+    }
+
+    save(books);
+    activeTab = book.status;
+    document.querySelectorAll('nav button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === activeTab);
+    });
+    closeModal();
+    render();
+  });
+
+  // ─── ACTIONS ─────────────────────────────────────────────────────────────
+  function editBook(id) {
+    const book = books.find(b => b.id === id);
+    if (book) openModal(book);
+  }
+
+  function deleteBook(id) {
+    if (!confirm('¿Eliminar este libro?')) return;
+    books = books.filter(b => b.id !== id);
+    save(books);
+    render();
+  }
+
+  function moveBook(id, newStatus) {
+    books = books.map(b => b.id === id ? { ...b, status: newStatus } : b);
+    save(books);
+    activeTab = newStatus;
+    document.querySelectorAll('nav button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === activeTab);
+    });
+    render();
+  }
+
+  // ─── EDITOR WYSIWYG ──────────────────────────────────────────────────────
+  const editor = document.getElementById('fNotes');
+  const toolbar = document.getElementById('editorToolbar');
+
+  // Ejecutar comandos de formato
+  toolbar.addEventListener('mousedown', e => {
+    const btn = e.target.closest('.tb-btn');
+    if (!btn) return;
+    e.preventDefault(); // no perder el foco del editor
+
+    const cmd = btn.dataset.cmd;
+
+    if (cmd === 'blockquote') {
+      // Toggle blockquote manual
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return;
+      const range = sel.getRangeAt(0);
+      const block = range.startContainer.parentElement?.closest('blockquote');
+      if (block) {
+        // ya está en blockquote → sacar
+        const parent = block.parentNode;
+        while (block.firstChild) parent.insertBefore(block.firstChild, block);
+        parent.removeChild(block);
+      } else {
+        document.execCommand('formatBlock', false, 'blockquote');
+      }
+    } else {
+      document.execCommand(cmd, false, null);
+    }
+
+    updateToolbarState();
+    editor.focus();
+  });
+
+  // Actualizar estado activo de botones
+  function updateToolbarState() {
+    toolbar.querySelectorAll('.tb-btn[data-cmd]').forEach(btn => {
+      const cmd = btn.dataset.cmd;
+      if (cmd === 'blockquote') {
+        const sel = window.getSelection();
+        const inBQ = sel.rangeCount && sel.getRangeAt(0).startContainer.parentElement?.closest('blockquote');
+        btn.classList.toggle('active', !!inBQ);
+      } else if (cmd !== 'removeFormat') {
+        try { btn.classList.toggle('active', document.queryCommandState(cmd)); }
+        catch {}
+      }
+    });
+  }
+
+  editor.addEventListener('keyup', updateToolbarState);
+  editor.addEventListener('mouseup', updateToolbarState);
+  editor.addEventListener('selectionchange', updateToolbarState);
+
+  // Tab → indent en listas
+  editor.addEventListener('keydown', e => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      document.execCommand(e.shiftKey ? 'outdent' : 'indent');
+    }
+  });
+
+  // ─── INIT ─────────────────────────────────────────────────────────────────
+  render();
+</script>
+</body>
+</html>
