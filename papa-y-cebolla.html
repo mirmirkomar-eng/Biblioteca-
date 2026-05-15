@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#5c3a21">
+<title>Papa y Cebolla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5ead8;
+    --bg-card: #fffbf2;
+    --ink: #2a1a0e;
+    --ink-soft: #6b4f3a;
+    --brown: #5c3a21;
+    --brown-deep: #3d2614;
+    --accent: #c84b1e;
+    --accent-soft: #f4a261;
+    --green: #4a6b2e;
+    --warning-bg: #fff4d4;
+    --warning-border: #e8b94d;
+    --warning-ink: #6b4a0e;
+    --danger-bg: #ffe3d4;
+    --danger-border: #e88550;
+    --danger-ink: #7a2e0e;
+    --line: #d9c4a3;
+    --shadow: 0 2px 0 rgba(61, 38, 20, 0.08), 0 8px 24px rgba(61, 38, 20, 0.06);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 16px;
+    padding-bottom: 80px;
+    font-size: 17px;
+    line-height: 1.4;
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(200, 75, 30, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(74, 107, 46, 0.04) 0%, transparent 50%);
+  }
+  header {
+    text-align: center;
+    margin: 8px 0 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px dashed var(--line);
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 34px;
+    margin: 0;
+    color: var(--brown-deep);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  h1 .amp {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 28px;
+    margin: 0 4px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .search-wrap {
+    position: sticky;
+    top: 8px;
+    z-index: 10;
+    margin-bottom: 16px;
+  }
+  .search-box {
+    position: relative;
+    background: var(--bg-card);
+    border: 2px solid var(--brown-deep);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .search-box input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 18px 50px 18px 20px;
+    font-size: 18px;
+    font-family: inherit;
+    color: var(--ink);
+    outline: none;
+    font-weight: 500;
+  }
+  .search-box input::placeholder { color: var(--ink-soft); opacity: 0.7; }
+  .search-icon {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    pointer-events: none;
+    color: var(--brown);
+  }
+  .clear-btn {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--line);
+    border-radius: 50%;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--brown-deep);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .clear-btn.show { display: flex; }
+  .count {
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 500;
+  }
+  .count strong { color: var(--brown-deep); }
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .card {
+    background: var(--bg-card);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .card.has-warning {
+    border-color: var(--warning-border);
+    border-width: 2px;
+  }
+  .card.has-danger {
+    border-color: var(--danger-border);
+    border-width: 2px;
+  }
+  .aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+  .aviso.warning {
+    background: var(--warning-bg);
+    color: var(--warning-ink);
+    border: 1px solid var(--warning-border);
+  }
+  .aviso.danger {
+    background: var(--danger-bg);
+    color: var(--danger-ink);
+    border: 1px solid var(--danger-border);
+  }
+  .aviso .ic {
+    flex-shrink: 0;
+    font-size: 16px;
+    line-height: 1;
+    margin-top: 1px;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .card-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--brown-deep);
+    line-height: 1.2;
+    flex: 1;
+  }
+  .card-detail {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin-top: 2px;
+    font-style: italic;
+  }
+  .badge {
+    background: var(--brown-deep);
+    color: var(--bg);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 9px;
+    border-radius: 6px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    font-family: 'Inter', monospace;
+  }
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .info-row .ic {
+    color: var(--accent);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .info-row .lbl {
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-weight: 500;
+    margin-right: 2px;
+  }
+  .m2-big {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #fce8c4 0%, #f4d9a8 100%);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .m2-big .lbl {
+    font-size: 13px;
+    color: var(--brown);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .m2-big .val {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--brown-deep);
+  }
+  .m2-big .val small { font-size: 14px; font-weight: 500; }
+  .prices {
+    margin-top: 12px;
+    border-top: 1px dashed var(--line);
+    padding-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .price {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #fff8ea;
+    border: 1px solid var(--line);
+  }
+  .price.combo {
+    background: linear-gradient(135deg, #fff 0%, #fef3e1 100%);
+    border-color: var(--accent-soft);
+  }
+  .price-lbl {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+  .price-val {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--brown-deep);
+    margin-top: 4px;
+    line-height: 1.1;
+  }
+  .price.combo .price-val { color: var(--accent); }
+  .empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--ink-soft);
+  }
+  .empty .emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+  }
+  .empty p { margin: 4px 0; font-size: 15px; }
+  .hint {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ink-soft);
+  }
+  .hint .emoji { font-size: 56px; margin-bottom: 14px; }
+  .hint p { margin: 4px 0; font-size: 15px; line-height: 1.5; }
+  .hint strong { color: var(--brown-deep); }
+  footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed var(--line);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  footer .prices-info {
+    margin-top: 6px;
+    font-weight: 600;
+    color: var(--brown);
+  }
+  @media (max-width: 360px) {
+    body { font-size: 16px; padding: 12px; }
+    h1 { font-size: 28px; }
+    .card-name { font-size: 18px; }
+    .prices { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Papa <span class="amp">y</span> Cebolla</h1>
+  <div class="subtitle">Buscador de granjas</div>
+</header>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <input type="text" id="q" placeholder="Buscar granja, localidad o código…" autocomplete="off" inputmode="search">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <button class="clear-btn" id="clearBtn" aria-label="Limpiar">×</button>
+  </div>
+  <div class="count" id="count"></div>
+</div>
+
+<div class="results" id="results"></div>
+
+<footer>
+  <div>156 granjas vigentes</div>
+  <div class="prices-info">Lavado simple: $59,78/m² · + piso: $99,47/m²</div>
+</footer>
+
+<script>
+const PRECIO_SIMPLE = 59.78;
+const PRECIO_PISO = 99.47;
+const GRANJAS = [{"codigo":"2607","nombre":"(LOS NIETOS)","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":4500.0,"aviso":""},{"codigo":"2946","nombre":"ABALO JONATAN","detalle":"","localidad":"SALTO","departamento":"SALTO","m2":4400.0,"aviso":""},{"codigo":"2916","nombre":"ABARRATEGUI - DON MATIAS -","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":4480.0,"aviso":""},{"codigo":"2906","nombre":"AGRO RANCHO VIEJO S.A.","detalle":"","localidad":"SALADILLO","departamento":"SALADILLO","m2":4740.0,"aviso":""},{"codigo":"2914","nombre":"AGRO RANCHO VIEJO S.A.","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":6950.0,"aviso":""},{"codigo":"2797","nombre":"AGROCEREALES","detalle":"","localidad":"PEDERNALES","departamento":"PEDERNALES","m2":9000.0,"aviso":""},{"codigo":"2845","nombre":"AGROINDUSTRIAS LA CAROLINA S.A.","detalle":"","localidad":"PEDERNALES","departamento":"PEDERNALES","m2":21471.0,"aviso":""},{"codigo":"2994","nombre":"AIRES DEL NOGAL","detalle":"","localidad":"MOQUEHUA","departamento":"150","m2":7840.0,"aviso":""},{"codigo":"2890","nombre":"ALFA AGROPECUARIA SRL","detalle":"","localidad":"MERCEDES","departamento":"MERCEDES","m2":7760.0,"aviso":""},{"codigo":"2816","nombre":"ALPAGRO S.A","detalle":"","localidad":"PERGAMINO","departamento":"PERGAMINO","m2":6300.0,"aviso":""},{"codigo":"2857","nombre":"AMAYA HORACIO","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":13350.0,"aviso":""},{"codigo":"2952","nombre":"AVICOL SA  - DON CARDE","detalle":"","localidad":"CHENAUT","departamento":"CHENAUT","m2":25400.0,"aviso":""},{"codigo":"2939","nombre":"AVICOLA DEL CARRIL S.R.L.","detalle":"","localidad":"DEL CARRIL","departamento":"DEL CARRIL","m2":12072.0,"aviso":""},{"codigo":"2979","nombre":"AZNAR PAOLA ANDREA","detalle":"","localidad":"DELL CARRIL","departamento":"DELL CARRIL","m2":4560.0,"aviso":""},{"codigo":"2984","nombre":"BIENPOSTO ROBERTO JOSE","detalle":"","localidad":"ARROYO DULCE","departamento":"ARROYO DULCE","m2":7474.0,"aviso":""},{"codigo":"2750","nombre":"BIRADOR HNOS.","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":11238.0,"aviso":""},{"codigo":"2901","nombre":"BORGES MENDEZ FERNANDO MANUEL","detalle":"","localidad":"CAÑUELAS","departamento":"CAÑUELAS","m2":7457.0,"aviso":""},{"codigo":"2951","nombre":"CABAÑA DON BERNARDO","detalle":"","localidad":"SANTA LUCIA","departamento":"SANTA LUCIA","m2":12500.0,"aviso":""},{"codigo":"2858","nombre":"CAMATS 2","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":15255.0,"aviso":""},{"codigo":"2726","nombre":"CAMPO SANTA LUCIA","detalle":"","localidad":"SANTA LUCIA","departamento":"SANTA LUCIA","m2":9750.0,"aviso":""},{"codigo":"2824","nombre":"CAPRETO (SAN PATRICIO)","detalle":"","localidad":"COLON","departamento":"COLON","m2":8500.0,"aviso":""},{"codigo":"2927","nombre":"CARNES DE LA PATAGONIA NEUQUINA","detalle":"","localidad":"ALVEAR","departamento":"ALVEAR","m2":7800.0,"aviso":""},{"codigo":"2974","nombre":"CARNES DE LA PATAGONIA NEUQUINA SA 2","detalle":"","localidad":"ALVEAR","departamento":"ALVEAR","m2":7800.0,"aviso":""},{"codigo":"2778","nombre":"CASALONGUE HUGO MARTIN","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":8000.0,"aviso":""},{"codigo":"2870","nombre":"CASTELANI ALFREDO ROMANO","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":7470.0,"aviso":""},{"codigo":"2501","nombre":"CASTILLO CLAUDIO SERGIO","detalle":"","localidad":"DOYLE","departamento":"DOYLE","m2":3600.0,"aviso":""},{"codigo":"2741","nombre":"CENTURION JOSE LUIS","detalle":"","localidad":"LA DELIA","departamento":"","m2":6000.0,"aviso":""},{"codigo":"2727","nombre":"CHACRA EL OMBU","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":6300.0,"aviso":""},{"codigo":"2910","nombre":"CHACRA EL OMBU 2","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":11580.0,"aviso":""},{"codigo":"2862","nombre":"COFLUENTES 2","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":24000.0,"aviso":""},{"codigo":"2998","nombre":"COFLUENTES 3- DON HUMBERTO 3","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":28800.0,"aviso":""},{"codigo":"3000","nombre":"CRISOL AGROPECUARIA S.A.","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":11900.0,"aviso":""},{"codigo":"2762","nombre":"DADARIO","detalle":"","localidad":"CHIVILCOY","departamento":"CHIVILCOY","m2":6240.0,"aviso":""},{"codigo":"2950","nombre":"DADARIO MAXIMILIANO J. Y D ADARIO OMAR H. S.H.","detalle":"","localidad":"CHIVILCOY","departamento":"CHIVILCOY","m2":5280.0,"aviso":""},{"codigo":"2827","nombre":"DAMBERT S.A.","detalle":"","localidad":"INES INDART","departamento":"INES INDART","m2":8240.0,"aviso":""},{"codigo":"2524","nombre":"DIAMANTE REYNALDO ENRIQUE","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":3000.0,"aviso":""},{"codigo":"2981","nombre":"DOMINE MATIAS EMMANUEL","detalle":"","localidad":"MERCEDES","departamento":"MERCEDES","m2":11700.0,"aviso":""},{"codigo":"2963","nombre":"DON ARMANDO","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":4800.0,"aviso":""},{"codigo":"2711","nombre":"DON HAROLDO","detalle":"","localidad":"CHACABUCO","departamento":"CHACABUCO","m2":7300.0,"aviso":""},{"codigo":"2737","nombre":"DON HUMBERTO","detalle":"","localidad":"TODD","departamento":"ARRECIFES","m2":19500.0,"aviso":""},{"codigo":"2548","nombre":"DON LUIS GRANJA I","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":6500.0,"aviso":""},{"codigo":"2530","nombre":"DON PEDRO","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":4500.0,"aviso":""},{"codigo":"2581","nombre":"DON PEDRO","detalle":"","localidad":"CHIVILCOY","departamento":"CHIVILCOY","m2":7850.0,"aviso":""},{"codigo":"2829","nombre":"DON RAMON","detalle":"","localidad":"DOYLE","departamento":"DOYLE","m2":7900.0,"aviso":""},{"codigo":"2935","nombre":"DOUBAC SRL","detalle":"","localidad":"RANCHO","departamento":"RANCHO","m2":11100.0,"aviso":""},{"codigo":"2969","nombre":"DOÑA CHICHA SA  1","detalle":"","localidad":"ALVEAR","departamento":"ALVEAR","m2":7800.0,"aviso":""},{"codigo":"2970","nombre":"DOÑA CHICHA SA  2","detalle":"","localidad":"ALVEAR","departamento":"ALVEAR","m2":7800.0,"aviso":""},{"codigo":"2770","nombre":"DOÑA JULIA","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":12600.0,"aviso":""},{"codigo":"2723","nombre":"EL FRANCISCO","detalle":"","localidad":"LA DELIA","departamento":"ARRECIFES","m2":9600.0,"aviso":""},{"codigo":"2582","nombre":"EL GURI","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":2500.0,"aviso":""},{"codigo":"2709","nombre":"EL MIRADOR II","detalle":"","localidad":"INES INDART","departamento":"INES INDART","m2":6520.0,"aviso":""},{"codigo":"2779","nombre":"EL MORO","detalle":"","localidad":"BRAGADO","departamento":"BRAGADO","m2":3000.0,"aviso":""},{"codigo":"2995","nombre":"EL NOGAL","detalle":"","localidad":"MOQUEHUA","departamento":"","m2":8800.0,"aviso":""},{"codigo":"2716","nombre":"EL PALOMAR","detalle":"","localidad":"LOS INDIOS","departamento":"LOS INDIOS","m2":2700.0,"aviso":""},{"codigo":"2875","nombre":"EL RELINCHO","detalle":"","localidad":"SANTA LUCIA","departamento":"SANTA LUCIA","m2":4020.0,"aviso":""},{"codigo":"2879","nombre":"ELICAM","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":25550.0,"aviso":""},{"codigo":"2651","nombre":"EMPREND. RURALES SAN PEDRO SA","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":10800.0,"aviso":""},{"codigo":"3001","nombre":"ESTABLECIMIENTO LA LOMA","detalle":"","localidad":"GENERAL RODRIGUEZ","departamento":"GENERAL RODRIGUEZ","m2":19944.0,"aviso":""},{"codigo":"2960","nombre":"FIDALGOS 2","detalle":"","localidad":"DEL CARRIL","departamento":"DEL CARRIL","m2":7200.0,"aviso":""},{"codigo":"2803","nombre":"FIORETTI JORGE FEDERICO","detalle":"","localidad":"NORBERTO DE LA RIESTRA","departamento":"NORBERTO DE LA RIESTRA","m2":5175.0,"aviso":""},{"codigo":"3002","nombre":"FRADEI2 - PAZINI NUEVA","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":16000.0,"aviso":""},{"codigo":"2633","nombre":"FRANAFA SRL","detalle":"","localidad":"CARABELAS","departamento":"CARABELAS","m2":9060.0,"aviso":""},{"codigo":"2594","nombre":"GAVILONDO FABIO HERNAN","detalle":"","localidad":"PJE BELADRICH - ARRECIFES","departamento":"PJE BELADRICH - ARRECIFES","m2":6400.0,"aviso":""},{"codigo":"2986","nombre":"GONZALEZ JAVIER","detalle":"","localidad":"SUIPACHA","departamento":"SUIPACHA","m2":2880.0,"aviso":""},{"codigo":"2794","nombre":"GRANJA ANGELERI","detalle":"","localidad":"LA LUISA","departamento":"CAP. SARMIENTO","m2":2000.0,"aviso":""},{"codigo":"2652","nombre":"GRANJA ARECO","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":3600.0,"aviso":""},{"codigo":"3015","nombre":"GRANJA BUENA VISTA","detalle":"","localidad":"Santa Lucia","departamento":"Santa Lucia","m2":1900.0,"aviso":""},{"codigo":"2552","nombre":"GRANJA DE BUCHHAMER","detalle":"","localidad":"CAPITAN SARMIENTO","departamento":"CAPITAN SARMIENTO","m2":4140.0,"aviso":""},{"codigo":"2929","nombre":"GRANJA DON MATIAS S.R.L","detalle":"","localidad":"SAN ANDRES DE GILES","departamento":"SAN ANDRES DE GILES","m2":8400.0,"aviso":""},{"codigo":"2544","nombre":"GRANJA DON MIGUEL","detalle":"","localidad":"BARADERO","departamento":"BARADERO","m2":3000.0,"aviso":""},{"codigo":"2807","nombre":"GRANJA DON SANTIAGO","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":20050.0,"aviso":""},{"codigo":"3004","nombre":"GRANJA EL 55 (ALQUILADA)","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":4000.0,"aviso":""},{"codigo":"2999","nombre":"GRANJA EL JAHUEL","detalle":"","localidad":"SAN MIGUEL DEL MONTE","departamento":"SAN MIGUEL DEL MONTE","m2":3700.0,"aviso":""},{"codigo":"2996","nombre":"GRANJA EL OMBU","detalle":"","localidad":"TRES SARGENTOS","departamento":"","m2":10920.0,"aviso":""},{"codigo":"2958","nombre":"GRANJA ESCOBAR","detalle":"","localidad":"ESCOBAR","departamento":"ESCOBAR","m2":8400.0,"aviso":""},{"codigo":"3006","nombre":"GRANJA JESIMELL","detalle":"GRANJA EL 55 (ALQUILADA)","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":4150.0,"aviso":""},{"codigo":"2991","nombre":"GRANJA LA COLONIA","detalle":"","localidad":"BARADERO","departamento":"BARADERO","m2":5440.0,"aviso":""},{"codigo":"2954","nombre":"GRANJA LAS FLORES","detalle":"","localidad":"BRANDSEN","departamento":"BRANDSEN","m2":6633.0,"aviso":""},{"codigo":"2993","nombre":"GRANJA LOS AROMOS - JARCZAK","detalle":"","localidad":"BARADERO","departamento":"BARADERO","m2":7200.0,"aviso":""},{"codigo":"3005","nombre":"GRANJA LOS CACTUS (ALQUILADA)","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":4000.0,"aviso":""},{"codigo":"2761","nombre":"GRANJA LOS CHOCHOS","detalle":"","localidad":"CHIVILCOY","departamento":"CHIVILCOY","m2":4620.0,"aviso":""},{"codigo":"3003","nombre":"GRANJA LOS NARANJOS","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":6160.0,"aviso":""},{"codigo":"2949","nombre":"GRANJA PEÑATE (EX BIONE)","detalle":"","localidad":"LA LUISA","departamento":"CAPITAN SARMIENTO","m2":4400.0,"aviso":""},{"codigo":"2878","nombre":"GRANJA SANTA MARIA","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":19800.0,"aviso":""},{"codigo":"2880","nombre":"IHCEMA SA (GERMANO)","detalle":"","localidad":"PEDERNALES","departamento":"PEDERNALES","m2":24960.0,"aviso":""},{"codigo":"2825","nombre":"INDAL (GRANJA CAMINERA)","detalle":"","localidad":"COLON","departamento":"COLON","m2":4530.0,"aviso":""},{"codigo":"2823","nombre":"INDAL S.A.","detalle":"","localidad":"COLON","departamento":"COLON","m2":6600.0,"aviso":""},{"codigo":"2776","nombre":"ISEAS, FIORI Y STANIERI S. DE H.","detalle":"","localidad":"NORBERTO DE LA RIESTRA","departamento":"NORBERTO DE LA RIESTRA","m2":7200.0,"aviso":""},{"codigo":"3008","nombre":"JBL CONSTRUCTORA","detalle":"GRANJA EL 55 (ALQUILADA)","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":7200.0,"aviso":""},{"codigo":"2673","nombre":"JOTAGE","detalle":"","localidad":"BARADERO","departamento":"BARADERO","m2":12120.0,"aviso":""},{"codigo":"2826","nombre":"KENNY CARLOS ALBERTO","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":13174.0,"aviso":""},{"codigo":"2754","nombre":"KLE S.A.","detalle":"","localidad":"CHIVILCOY","departamento":"CHIVILCOY","m2":6600.0,"aviso":""},{"codigo":"2997","nombre":"LA ANTIOQUEÑA SRL (Ex Castro Celia)","detalle":"","localidad":"LA LUISA","departamento":"CAPITAN SARMIENTO","m2":4320.0,"aviso":""},{"codigo":"2703","nombre":"LA CECILIA","detalle":"","localidad":"TODD","departamento":"ARRECIFES","m2":5200.0,"aviso":""},{"codigo":"3012","nombre":"LA DORITA","detalle":"","localidad":"Lima","departamento":"Lima","m2":11800.0,"aviso":""},{"codigo":"2888","nombre":"LA ESPERANZA","detalle":"","localidad":"LA PAZ CHICA","departamento":"LA PAZ CHICA","m2":4400.0,"aviso":""},{"codigo":"2558","nombre":"LA MAMA","detalle":"","localidad":"ARROYO DULCE","departamento":"ARROYO DULCE","m2":5500.0,"aviso":""},{"codigo":"2934","nombre":"LA OTRA","detalle":"","localidad":"ALVEAR","departamento":"ALVEAR","m2":15600.0,"aviso":""},{"codigo":"2940","nombre":"LA OTRA","detalle":"","localidad":"ALVEAR","departamento":"ALVEAR","m2":7800.0,"aviso":""},{"codigo":"2799","nombre":"LA QUERENCIA","detalle":"","localidad":"NORBERTO DE LA RIESTRA","departamento":"NORBERTO DE LA RIESTRA","m2":9000.0,"aviso":""},{"codigo":"3016","nombre":"LA SARITA","detalle":"","localidad":"Zarate","departamento":"Zarate","m2":11100.0,"aviso":""},{"codigo":"2785","nombre":"LA TORCAZA","detalle":"","localidad":"NORBERTO DE LA RIESTRA","departamento":"NORBERTO DE LA RIESTRA","m2":11850.0,"aviso":""},{"codigo":"2959","nombre":"LA VERDE Y ROJA S.A.S.","detalle":"","localidad":"FLORES","departamento":"FLORES","m2":11160.0,"aviso":""},{"codigo":"2756","nombre":"LAMBERTUCCI OSVALDO HECTOR","detalle":"","localidad":"NORBERTO DE LA RIESTRA","departamento":"NORBERTO DE LA RIESTRA","m2":4415.0,"aviso":""},{"codigo":"2859","nombre":"LAMELA","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":4570.0,"aviso":""},{"codigo":"2978","nombre":"LAPLUME Y ASOCIADOS SRL","detalle":"","localidad":"CAPILLA DEL SEÑOR","departamento":"CAPILLA DEL SEÑOR","m2":8700.0,"aviso":""},{"codigo":"2903","nombre":"LOPEZ DEVAUX S.A","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":9980.0,"aviso":""},{"codigo":"2841","nombre":"LOS FIDALGOS","detalle":"","localidad":"DEL CARRIL","departamento":"DEL CARRIL","m2":2600.0,"aviso":""},{"codigo":"2574","nombre":"LOS NIETOS","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":13800.0,"aviso":""},{"codigo":"2682","nombre":"LOS QUERANDIES","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":10587.0,"aviso":""},{"codigo":"3010","nombre":"LUJAN ( ESCORPION)","detalle":"","localidad":"SALTO","departamento":"SALTO","m2":2000.0,"aviso":""},{"codigo":"2503","nombre":"MACENET OSCAR ALBERTO","detalle":"","localidad":"RIO TALA","departamento":"RIO TALA","m2":2400.0,"aviso":""},{"codigo":"2977","nombre":"MALISANI AGUSTIN","detalle":"","localidad":"NORBERTO DE LA RIESTRA","departamento":"NORBERTO DE LA RIESTRA","m2":9120.0,"aviso":""},{"codigo":"2893","nombre":"MARSOCOAL ARRECIFES SOCIEDAD ANONIMA","detalle":"","localidad":"LA DELIA","departamento":"ARRECIFES","m2":4030.0,"aviso":""},{"codigo":"2843","nombre":"MARTINEZ OSCAR ALFREDO","detalle":"","localidad":"SANTA LUCIA","departamento":"SANTA LUCIA","m2":3645.0,"aviso":""},{"codigo":"2987","nombre":"MATIAS EDUARDO CARAMP Y JORGE MARIANO C","detalle":"","localidad":"CHENAUT","departamento":"CHENAUT","m2":12600.0,"aviso":""},{"codigo":"3009","nombre":"MIRAKUNI","detalle":"GRANJA LOS CACTUS (ALQUILADA)","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":4000.0,"aviso":""},{"codigo":"2549","nombre":"MONCHO I","detalle":"","localidad":"LA DELIA","departamento":"ARRECIFES","m2":4960.0,"aviso":""},{"codigo":"2619","nombre":"MONCHO II","detalle":"","localidad":"LA DELIA","departamento":"ARRECIFES","m2":4820.0,"aviso":""},{"codigo":"2928","nombre":"MONTAGNA OSCAR ALBERTO","detalle":"","localidad":"CAPITAN SARMIENTO","departamento":"CAPITAN SARMIENTO","m2":4960.0,"aviso":""},{"codigo":"2982","nombre":"MONTAGNA OSCAR ALBERTO","detalle":"","localidad":"CAPITAN SARMIENTO","departamento":"CAPITAN SARMIENTO","m2":3150.0,"aviso":""},{"codigo":"2971","nombre":"MORENO ZULMA VICTORIA","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":5700.0,"aviso":""},{"codigo":"2948","nombre":"NESPRAL","detalle":"","localidad":"PEDERNALES","departamento":"PEDERNALES","m2":1815.0,"aviso":""},{"codigo":"2759","nombre":"OTEGUI GONZALO","detalle":"","localidad":"NORBERTO DE LA RIESTRA","departamento":"NORBERTO DE LA RIESTRA","m2":9780.0,"aviso":""},{"codigo":"2758","nombre":"PELIZZA JAVIER DARIO","detalle":"","localidad":"CARABELAS","departamento":"CARABELAS","m2":10160.0,"aviso":""},{"codigo":"2988","nombre":"PELIZZA JAVIER DARIO","detalle":"","localidad":"SALTO","departamento":"SALTO","m2":7220.0,"aviso":""},{"codigo":"2815","nombre":"PERELLO JOSE ALDO","detalle":"","localidad":"SANTA LUCIA","departamento":"SANTA LUCIA","m2":4840.0,"aviso":""},{"codigo":"2796","nombre":"PIOGRUP","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":16200.0,"aviso":""},{"codigo":"2753","nombre":"PUERTO FUY AGROPECUARIA S.A.","detalle":"","localidad":"NORBERTO DE LA RIESTRA","departamento":"NORBERTO DE LA RIESTRA","m2":6290.0,"aviso":""},{"codigo":"2677","nombre":"RADICICH TOMAS GUILLERMO","detalle":"","localidad":"SALTO","departamento":"SALTO","m2":5000.0,"aviso":""},{"codigo":"2962","nombre":"RAICES NEGRAS","detalle":"","localidad":"LA LUISA","departamento":"CAPITAN SARMIENTO","m2":6300.0,"aviso":""},{"codigo":"2624","nombre":"RAMCOLO SRL","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":5568.0,"aviso":""},{"codigo":"2957","nombre":"RAMOS MIGUEL ANGEL","detalle":"","localidad":"GENERAL ARENALES","departamento":"GENERAL ARENALES","m2":8400.0,"aviso":""},{"codigo":"2570","nombre":"RASSETTO JUAN CARLOS","detalle":"","localidad":"CHIVILCOY","departamento":"CHIVILCOY","m2":2000.0,"aviso":""},{"codigo":"2975","nombre":"REYNOSO MARTIN ADOLFO","detalle":"","localidad":"CAP. SARMIENTO","departamento":"CAP. SARMIENTO","m2":4000.0,"aviso":""},{"codigo":"3011","nombre":"RINCON CHICO -GARCIA JUSTINA","detalle":"","localidad":"Capilla del Señor","departamento":"Capilla del Señor","m2":5900.0,"aviso":""},{"codigo":"2885","nombre":"RIO ARRECIFES TRANSPORTE S.A.","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":17550.0,"aviso":""},{"codigo":"2889","nombre":"RIO ARRECIFES TRANSPORTE S.A. 2","detalle":"","localidad":"ARRECIFES","departamento":"ARRECIFES","m2":7200.0,"aviso":""},{"codigo":"2967","nombre":"RODRIGUEZ MANUEL ATILIO","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":5200.0,"aviso":""},{"codigo":"2966","nombre":"RODRIGUEZ MARIA ISABEL","detalle":"","localidad":"CARMEN DE ARECO","departamento":"CARMEN DE ARECO","m2":4980.0,"aviso":""},{"codigo":"2937","nombre":"SAN ANDRES","detalle":"","localidad":"NAVARRO","departamento":"NAVARRO","m2":12600.0,"aviso":""},{"codigo":"2740","nombre":"SAN BONIFACIO I","detalle":"","localidad":"MERCEDES","departamento":"MERCEDES","m2":7200.0,"aviso":""},{"codigo":"2866","nombre":"SAN MATEO","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":12600.0,"aviso":""},{"codigo":"2783","nombre":"SANCHEZ LEONELA","detalle":"","localidad":"CAPITAN SARMIENTO","departamento":"CAPITAN SARMIENTO","m2":3800.0,"aviso":""},{"codigo":"2521","nombre":"SANCHEZ OLINDA","detalle":"","localidad":"SAN PEDRO","departamento":"SAN PEDRO","m2":4675.0,"aviso":""},{"codigo":"2585","nombre":"SANTA ANALIA","detalle":"","localidad":"SALTO","departamento":"SALTO","m2":4400.0,"aviso":""},{"codigo":"2921","nombre":"SERVICIOS JVG","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":7200.0,"aviso":"posible_dup"},{"codigo":"2922","nombre":"SERVICIOS JVG","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":5400.0,"aviso":""},{"codigo":"2923","nombre":"SERVICIOS JVG","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":7200.0,"aviso":"posible_dup"},{"codigo":"2912","nombre":"SOSA MARCOS SEBASTIAN","detalle":"","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":3750.0,"aviso":""},{"codigo":"3007","nombre":"SOSA- LA EMILIA","detalle":"GRANJA LOS CACTUS (ALQUILADA)","localidad":"ROQUE PEREZ","departamento":"ROQUE PEREZ","m2":1380.0,"aviso":""},{"codigo":"2744","nombre":"SOYCHU GRANJA PROPIA","detalle":"","localidad":"ACEVEDO","departamento":"ACEVEDO","m2":2400.0,"aviso":""},{"codigo":"2942","nombre":"SUCCATTI SANTIAGO AGUSTIN","detalle":"","localidad":"BARADERO","departamento":"BARADERO","m2":8175.0,"aviso":""},{"codigo":"2869","nombre":"SUCESIÓN DE RUIZ MODESTO","detalle":"","localidad":"DOYLE","departamento":"DOYLE","m2":6800.0,"aviso":""},{"codigo":"2782","nombre":"TRELLES ROBERTO ADOLFO","detalle":"","localidad":"LA DELIA","departamento":"ARRECIFES","m2":1200.0,"aviso":""},{"codigo":"2947","nombre":"VALENTE GUSTAVO ARIEL","detalle":"","localidad":"DUGGAN","departamento":"DUGGAN","m2":2550.0,"aviso":""}];
+
+const norm = s => (s || '').toString().toLowerCase()
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+GRANJAS.forEach(g => {
+  g._search = [g.nombre, g.localidad, g.codigo, g.detalle, g.departamento]
+    .map(norm).join(' ');
+});
+
+const fmtMoney = n => '$' + new Intl.NumberFormat('es-AR', {
+  minimumFractionDigits: 2, maximumFractionDigits: 2
+}).format(n);
+
+const fmtM2 = n => {
+  if (n % 1 !== 0) {
+    return new Intl.NumberFormat('es-AR', {
+      minimumFractionDigits: 1, maximumFractionDigits: 1
+    }).format(n);
+  }
+  return new Intl.NumberFormat('es-AR').format(n);
+};
+
+const escapeHtml = s => (s || '').toString()
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+function renderAviso(g) {
+  if (g.aviso === 'codigo_dup') {
+    return `<div class="aviso danger">
+      <span class="ic">⚠</span>
+      <span>Este código (Nº ${escapeHtml(g.codigo)}) aparece <strong>repetido</strong> en otra granja. Verificar con el archivo original cuál es la correcta.</span>
+    </div>`;
+  }
+  if (g.aviso === 'posible_dup') {
+    return `<div class="aviso warning">
+      <span class="ic">⚠</span>
+      <span>Hay otra granja con el mismo nombre, localidad y m² exactos. <strong>Posible duplicado</strong> — verificar.</span>
+    </div>`;
+  }
+  return '';
+}
+
+function renderCard(g) {
+  const simple = g.m2 * PRECIO_SIMPLE;
+  const piso = g.m2 * PRECIO_PISO;
+  const dep = g.departamento && g.departamento !== g.localidad
+    ? `<span class="lbl">·</span> ${escapeHtml(g.departamento)}` : '';
+  const cardClass = g.aviso === 'codigo_dup' ? 'card has-danger'
+    : g.aviso === 'posible_dup' ? 'card has-warning' : 'card';
+
+  return `
+    <div class="${cardClass}">
+      ${renderAviso(g)}
+      <div class="card-head">
+        <div>
+          <div class="card-name">${escapeHtml(g.nombre)}</div>
+          ${g.detalle ? `<div class="card-detail">${escapeHtml(g.detalle)}</div>` : ''}
+        </div>
+        <div class="badge">Nº ${escapeHtml(g.codigo)}</div>
+      </div>
+      <div class="info-row">
+        <span class="ic">◉</span>
+        <span class="lbl">Ubicación:</span>
+        <span>${escapeHtml(g.localidad)} ${dep}</span>
+      </div>
+      <div class="m2-big">
+        <span class="lbl">Superficie</span>
+        <span class="val">${fmtM2(g.m2)} <small>m²</small></span>
+      </div>
+      <div class="prices">
+        <div class="price">
+          <div class="price-lbl">Lavado simple</div>
+          <div class="price-val">${fmtMoney(simple)}</div>
+        </div>
+        <div class="price combo">
+          <div class="price-lbl">Simple + piso</div>
+          <div class="price-val">${fmtMoney(piso)}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+const input = document.getElementById('q');
+const results = document.getElementById('results');
+const count = document.getElementById('count');
+const clearBtn = document.getElementById('clearBtn');
+
+function render(query) {
+  const q = norm(query).trim();
+  clearBtn.classList.toggle('show', q.length > 0);
+
+  if (!q) {
+    results.innerHTML = `
+      <div class="hint">
+        <div class="emoji">🐔</div>
+        <p>Escribí el <strong>nombre</strong>, <strong>localidad</strong></p>
+        <p>o <strong>número</strong> de la granja</p>
+      </div>`;
+    count.textContent = '';
+    return;
+  }
+
+  const words = q.split(/\s+/).filter(Boolean);
+  const matches = GRANJAS.filter(g =>
+    words.every(w => g._search.includes(w))
+  );
+
+  count.innerHTML = matches.length === 0
+    ? 'Sin resultados'
+    : `<strong>${matches.length}</strong> ${matches.length === 1 ? 'granja encontrada' : 'granjas encontradas'}`;
+
+  if (matches.length === 0) {
+    results.innerHTML = `
+      <div class="empty">
+        <div class="emoji">🔍</div>
+        <p>No se encontró ninguna granja con</p>
+        <p><strong>"${escapeHtml(query)}"</strong></p>
+      </div>`;
+    return;
+  }
+
+  const shown = matches.slice(0, 50);
+  results.innerHTML = shown.map(renderCard).join('');
+  if (matches.length > 50) {
+    results.innerHTML += `<div class="empty"><p>Se muestran las primeras 50 de ${matches.length}.</p><p>Refiná la búsqueda para ver menos.</p></div>`;
+  }
+}
+
+input.addEventListener('input', e => render(e.target.value));
+clearBtn.addEventListener('click', () => {
+  input.value = '';
+  input.focus();
+  render('');
+});
+
+render('');
+</script>
+</body>
+</html>
