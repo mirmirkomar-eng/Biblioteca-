@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Compras Semanal</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222;
+    --border: #2e2e2e;
+    --accent: #b8f55a;
+    --accent2: #ff6b35;
+    --text: #f0f0f0;
+    --muted: #666;
+    --danger: #ff4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  .header {
+    margin-bottom: 32px;
+  }
+
+  .header h1 {
+    font-size: clamp(28px, 6vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .header h1 span {
+    color: var(--accent);
+  }
+
+  .header p {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .week-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .week-nav button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .week-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 700;
+    flex: 1;
+    text-align: center;
+  }
+
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 140px auto;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  input.qty-input {
+    width: 80px;
+  }
+
+  input[type="text"], input[type="number"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+
+  input[type="text"]:focus, input[type="number"]:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="text"]::placeholder, input[type="number"]::placeholder {
+    color: var(--muted);
+  }
+
+  input[type="number"] {
+    width: 140px;
+  }
+
+  .btn-add {
+    background: var(--accent);
+    border: none;
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-add:hover {
+    background: #d4ff6a;
+    transform: translateY(-1px);
+  }
+
+  .btn-add:active {
+    transform: translateY(0);
+  }
+
+  .items-list {
+    margin-bottom: 24px;
+    min-height: 40px;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    margin-bottom: 2px;
+    animation: slideIn 0.2s ease;
+    gap: 8px;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .item-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .item-qty {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .item-price {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .item-delete {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    transition: color 0.15s;
+    line-height: 1;
+  }
+
+  .item-delete:hover {
+    color: var(--danger);
+  }
+
+  .empty-state {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    padding: 32px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px dashed var(--border);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .stat-card.accent {
+    border-color: var(--accent);
+    background: rgba(184, 245, 90, 0.05);
+  }
+
+  .stat-card.orange {
+    border-color: var(--accent2);
+    background: rgba(255, 107, 53, 0.05);
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stat-card.accent .stat-value { color: var(--accent); }
+  .stat-card.orange .stat-value { color: var(--accent2); }
+  .stat-card .stat-value { color: var(--text); }
+
+  .history-section {
+    margin-top: 32px;
+  }
+
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .history-week {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .history-week:hover {
+    border-color: var(--accent);
+  }
+
+  .history-week.active {
+    border-color: var(--accent);
+    background: rgba(184, 245, 90, 0.05);
+  }
+
+  .history-week-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+  }
+
+  .history-week-total {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .history-week-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  .btn-clear {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 6px 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .btn-clear:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+  }
+
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 480px) {
+    .input-row {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
+    }
+    .input-row input[type="text"] { grid-column: 1 / -1; }
+    .input-row input[type="number"] { width: 100%; }
+    .btn-add { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>REGISTRO DE<br><span>COMPRAS</span></h1>
+  <p>Control semanal · Proyección mensual</p>
+
+</div>
+
+<div class="week-nav">
+  <button onclick="changeWeek(-1)">← ANT</button>
+  <div class="week-label" id="weekLabel"></div>
+  <button onclick="changeWeek(1)">SIG →</button>
+</div>
+
+<div class="input-row">
+  <input type="text" id="inputName" placeholder="Producto (ej: Yogur griego)" onkeydown="handleKey(event)" />
+  <input type="number" id="inputQty" class="qty-input" placeholder="Cant." min="1" value="1" onkeydown="handleKey(event)" title="Cantidad" />
+  <input type="number" id="inputPrice" placeholder="$ Precio unitario" min="0" onkeydown="handleKey(event)" />
+  <button class="btn-add" onclick="addItem()">+ AGREGAR</button>
+</div>
+
+<div class="top-row">
+  <div class="section-title" style="margin:0; border:none;">ESTA SEMANA</div>
+  <button class="btn-clear" onclick="clearWeek()">LIMPIAR SEMANA</button>
+</div>
+
+<div class="items-list" id="itemsList"></div>
+
+<div class="stats-grid">
+  <div class="stat-card accent">
+    <div class="stat-label">Total semana</div>
+    <div class="stat-value" id="statWeek">$0</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-label">Proyección mes</div>
+    <div class="stat-value" id="statMonth">$0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Productos</div>
+    <div class="stat-value" id="statCount">0</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Promedio por item</div>
+    <div class="stat-value" id="statAvg">$0</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="history-section">
+  <div class="section-title">HISTORIAL DE SEMANAS</div>
+  <div id="historyList"></div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'compras_keto_v2';
+
+  // State
+  let data = loadData();
+  let currentWeekKey = getTodayWeekKey();
+
+  function getTodayWeekKey() {
+    const now = new Date();
+    const day = now.getDay(); // 0=dom
+    const diff = now.getDate() - day + (day === 0 ? -6 : 1); // lunes
+    const monday = new Date(now.setDate(diff));
+    return monday.toISOString().split('T')[0];
+  }
+
+  function getWeekLabel(weekKey) {
+    const d = new Date(weekKey + 'T12:00:00');
+    const end = new Date(d);
+    end.setDate(d.getDate() + 6);
+    const fmt = (dt) => dt.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
+    return `${fmt(d)} — ${fmt(end)}`;
+  }
+
+  function changeWeek(dir) {
+    const d = new Date(currentWeekKey + 'T12:00:00');
+    d.setDate(d.getDate() + dir * 7);
+    currentWeekKey = d.toISOString().split('T')[0];
+    render();
+  }
+
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+  }
+
+  function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function getCurrentItems() {
+    return data[currentWeekKey] || [];
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter') addItem();
+  }
+
+  function addItem() {
+    const name = document.getElementById('inputName').value.trim();
+    const price = parseFloat(document.getElementById('inputPrice').value);
+    const qty = parseInt(document.getElementById('inputQty').value) || 1;
+    if (!name || isNaN(price) || price < 0) return;
+
+    if (!data[currentWeekKey]) data[currentWeekKey] = [];
+    data[currentWeekKey].push({ id: Date.now(), name, price, qty });
+    saveData();
+
+    document.getElementById('inputName').value = '';
+    document.getElementById('inputPrice').value = '';
+    document.getElementById('inputQty').value = '1';
+    document.getElementById('inputName').focus();
+    render();
+  }
+
+  function deleteItem(id) {
+    if (!data[currentWeekKey]) return;
+    data[currentWeekKey] = data[currentWeekKey].filter(i => i.id !== id);
+    if (data[currentWeekKey].length === 0) delete data[currentWeekKey];
+    saveData();
+    render();
+  }
+
+  function clearWeek() {
+    if (!confirm('¿Limpiar todos los productos de esta semana?')) return;
+    delete data[currentWeekKey];
+    saveData();
+    render();
+  }
+
+  function formatPeso(n) {
+    return '$' + Math.round(n).toLocaleString('es-AR');
+  }
+
+  function render() {
+    // Week label
+    document.getElementById('weekLabel').textContent = getWeekLabel(currentWeekKey);
+
+    const items = getCurrentItems();
+    const total = items.reduce((s, i) => s + i.price * (i.qty || 1), 0);
+    const monthly = total * 4.33;
+    const avg = items.length ? total / items.length : 0;
+
+    // Items list
+    const list = document.getElementById('itemsList');
+    if (items.length === 0) {
+      list.innerHTML = '<div class="empty-state">Sin productos esta semana</div>';
+    } else {
+      list.innerHTML = items.map(item => {
+        const qty = item.qty || 1;
+        const subtotal = item.price * qty;
+        const qtyLabel = qty > 1 ? `<span class="item-qty">${qty}x ${formatPeso(item.price)}</span>` : '';
+        return `
+        <div class="item">
+          <span class="item-name">${escHtml(item.name)}</span>
+          ${qtyLabel}
+          <span class="item-price">${formatPeso(subtotal)}</span>
+          <button class="item-delete" onclick="deleteItem(${item.id})" title="Eliminar">✕</button>
+        </div>
+        `;
+      }).join('');
+    }
+
+    // Stats
+    document.getElementById('statWeek').textContent = formatPeso(total);
+    document.getElementById('statMonth').textContent = formatPeso(monthly);
+    document.getElementById('statCount').textContent = items.length;
+    document.getElementById('statAvg').textContent = formatPeso(avg);
+
+    // History
+    const allWeeks = Object.keys(data).sort((a, b) => b.localeCompare(a));
+    const historyEl = document.getElementById('historyList');
+    if (allWeeks.length === 0) {
+      historyEl.innerHTML = '<div class="empty-state">Sin historial todavía</div>';
+    } else {
+      historyEl.innerHTML = allWeeks.map(wk => {
+        const wItems = data[wk] || [];
+        const wTotal = wItems.reduce((s, i) => s + i.price, 0);
+        const isActive = wk === currentWeekKey;
+        return `
+          <div class="history-week ${isActive ? 'active' : ''}" onclick="goToWeek('${wk}')">
+            <div>
+              <div class="history-week-label">${getWeekLabel(wk)}</div>
+              <div class="history-week-count">${wItems.length} producto${wItems.length !== 1 ? 's' : ''}</div>
+            </div>
+            <div class="history-week-total">${formatPeso(wTotal)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  function goToWeek(wk) {
+    currentWeekKey = wk;
+    render();
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  render();
+</script>
+</body>
+</html>
